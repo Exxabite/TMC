@@ -1,0 +1,822 @@
+# Generated from m.g4 by ANTLR 4.9.3
+# encoding: utf-8
+from antlr4 import *
+from io import StringIO
+import sys
+if sys.version_info[1] > 5:
+	from typing import TextIO
+else:
+	from typing.io import TextIO
+
+
+def serializedATN():
+    with StringIO() as buf:
+        buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\22")
+        buf.write("?\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\3\2")
+        buf.write("\3\2\3\2\6\2\22\n\2\r\2\16\2\23\3\3\3\3\3\3\3\3\3\3\3")
+        buf.write("\3\3\3\3\3\5\3\36\n\3\3\4\3\4\5\4\"\n\4\3\5\3\5\3\5\3")
+        buf.write("\5\3\5\3\5\3\5\3\5\3\5\5\5-\n\5\3\5\3\5\3\5\3\5\3\5\3")
+        buf.write("\5\7\5\65\n\5\f\5\16\58\13\5\3\6\3\6\3\6\3\7\3\7\3\7\2")
+        buf.write("\3\b\b\2\4\6\b\n\f\2\4\3\2\5\6\3\2\7\b\2A\2\21\3\2\2\2")
+        buf.write("\4\35\3\2\2\2\6!\3\2\2\2\b,\3\2\2\2\n9\3\2\2\2\f<\3\2")
+        buf.write("\2\2\16\17\5\6\4\2\17\20\7\3\2\2\20\22\3\2\2\2\21\16\3")
+        buf.write("\2\2\2\22\23\3\2\2\2\23\21\3\2\2\2\23\24\3\2\2\2\24\3")
+        buf.write("\3\2\2\2\25\26\5\f\7\2\26\27\7\22\2\2\27\30\7\4\2\2\30")
+        buf.write("\31\5\b\5\2\31\36\3\2\2\2\32\33\7\22\2\2\33\34\7\4\2\2")
+        buf.write("\34\36\5\b\5\2\35\25\3\2\2\2\35\32\3\2\2\2\36\5\3\2\2")
+        buf.write("\2\37\"\5\4\3\2 \"\5\n\6\2!\37\3\2\2\2! \3\2\2\2\"\7\3")
+        buf.write("\2\2\2#$\b\5\1\2$-\7\16\2\2%&\7\t\2\2&\'\5\b\5\2\'(\7")
+        buf.write("\n\2\2(-\3\2\2\2)-\7\22\2\2*-\7\f\2\2+-\7\r\2\2,#\3\2")
+        buf.write("\2\2,%\3\2\2\2,)\3\2\2\2,*\3\2\2\2,+\3\2\2\2-\66\3\2\2")
+        buf.write("\2./\f\t\2\2/\60\t\2\2\2\60\65\5\b\5\n\61\62\f\b\2\2\62")
+        buf.write("\63\t\3\2\2\63\65\5\b\5\t\64.\3\2\2\2\64\61\3\2\2\2\65")
+        buf.write("8\3\2\2\2\66\64\3\2\2\2\66\67\3\2\2\2\67\t\3\2\2\28\66")
+        buf.write("\3\2\2\29:\5\f\7\2:;\7\22\2\2;\13\3\2\2\2<=\7\13\2\2=")
+        buf.write("\r\3\2\2\2\b\23\35!,\64\66")
+        return buf.getvalue()
+
+
+class mParser ( Parser ):
+
+    grammarFileName = "m.g4"
+
+    atn = ATNDeserializer().deserialize(serializedATN())
+
+    decisionsToDFA = [ DFA(ds, i) for i, ds in enumerate(atn.decisionToState) ]
+
+    sharedContextCache = PredictionContextCache()
+
+    literalNames = [ "<INVALID>", "';'", "'='", "'*'", "'/'", "'+'", "'-'", 
+                     "'('", "')'", "'int'" ]
+
+    symbolicNames = [ "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
+                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
+                      "<INVALID>", "<INVALID>", "HELLO", "BYE", "INT", "STRING", 
+                      "WS", "Newline", "WORD" ]
+
+    RULE_main = 0
+    RULE_assignVariable = 1
+    RULE_segment = 2
+    RULE_expr = 3
+    RULE_defineVariable = 4
+    RULE_typeSpecifier = 5
+
+    ruleNames =  [ "main", "assignVariable", "segment", "expr", "defineVariable", 
+                   "typeSpecifier" ]
+
+    EOF = Token.EOF
+    T__0=1
+    T__1=2
+    T__2=3
+    T__3=4
+    T__4=5
+    T__5=6
+    T__6=7
+    T__7=8
+    T__8=9
+    HELLO=10
+    BYE=11
+    INT=12
+    STRING=13
+    WS=14
+    Newline=15
+    WORD=16
+
+    def __init__(self, input:TokenStream, output:TextIO = sys.stdout):
+        super().__init__(input, output)
+        self.checkVersion("4.9.3")
+        self._interp = ParserATNSimulator(self, self.atn, self.decisionsToDFA, self.sharedContextCache)
+        self._predicates = None
+
+
+
+
+    class MainContext(ParserRuleContext):
+        __slots__ = 'parser'
+
+        def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
+            super().__init__(parent, invokingState)
+            self.parser = parser
+
+
+        def getRuleIndex(self):
+            return mParser.RULE_main
+
+     
+        def copyFrom(self, ctx:ParserRuleContext):
+            super().copyFrom(ctx)
+
+
+
+    class MainExpContext(MainContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a mParser.MainContext
+            super().__init__(parser)
+            self.copyFrom(ctx)
+
+        def segment(self, i:int=None):
+            if i is None:
+                return self.getTypedRuleContexts(mParser.SegmentContext)
+            else:
+                return self.getTypedRuleContext(mParser.SegmentContext,i)
+
+
+        def enterRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "enterMainExp" ):
+                listener.enterMainExp(self)
+
+        def exitRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "exitMainExp" ):
+                listener.exitMainExp(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitMainExp" ):
+                return visitor.visitMainExp(self)
+            else:
+                return visitor.visitChildren(self)
+
+
+
+    def main(self):
+
+        localctx = mParser.MainContext(self, self._ctx, self.state)
+        self.enterRule(localctx, 0, self.RULE_main)
+        self._la = 0 # Token type
+        try:
+            localctx = mParser.MainExpContext(self, localctx)
+            self.enterOuterAlt(localctx, 1)
+            self.state = 15 
+            self._errHandler.sync(self)
+            _la = self._input.LA(1)
+            while True:
+                self.state = 12
+                self.segment()
+                self.state = 13
+                self.match(mParser.T__0)
+                self.state = 17 
+                self._errHandler.sync(self)
+                _la = self._input.LA(1)
+                if not (_la==mParser.T__8 or _la==mParser.WORD):
+                    break
+
+        except RecognitionException as re:
+            localctx.exception = re
+            self._errHandler.reportError(self, re)
+            self._errHandler.recover(self, re)
+        finally:
+            self.exitRule()
+        return localctx
+
+
+    class AssignVariableContext(ParserRuleContext):
+        __slots__ = 'parser'
+
+        def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
+            super().__init__(parent, invokingState)
+            self.parser = parser
+
+
+        def getRuleIndex(self):
+            return mParser.RULE_assignVariable
+
+     
+        def copyFrom(self, ctx:ParserRuleContext):
+            super().copyFrom(ctx)
+
+
+
+    class AssignVarContext(AssignVariableContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a mParser.AssignVariableContext
+            super().__init__(parser)
+            self.name = None # Token
+            self.value = None # ExprContext
+            self.copyFrom(ctx)
+
+        def WORD(self):
+            return self.getToken(mParser.WORD, 0)
+        def expr(self):
+            return self.getTypedRuleContext(mParser.ExprContext,0)
+
+
+        def enterRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "enterAssignVar" ):
+                listener.enterAssignVar(self)
+
+        def exitRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "exitAssignVar" ):
+                listener.exitAssignVar(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitAssignVar" ):
+                return visitor.visitAssignVar(self)
+            else:
+                return visitor.visitChildren(self)
+
+
+    class AssignExprContext(AssignVariableContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a mParser.AssignVariableContext
+            super().__init__(parser)
+            self.type = None # TypeSpecifierContext
+            self.name = None # Token
+            self.value = None # ExprContext
+            self.copyFrom(ctx)
+
+        def typeSpecifier(self):
+            return self.getTypedRuleContext(mParser.TypeSpecifierContext,0)
+
+        def WORD(self):
+            return self.getToken(mParser.WORD, 0)
+        def expr(self):
+            return self.getTypedRuleContext(mParser.ExprContext,0)
+
+
+        def enterRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "enterAssignExpr" ):
+                listener.enterAssignExpr(self)
+
+        def exitRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "exitAssignExpr" ):
+                listener.exitAssignExpr(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitAssignExpr" ):
+                return visitor.visitAssignExpr(self)
+            else:
+                return visitor.visitChildren(self)
+
+
+
+    def assignVariable(self):
+
+        localctx = mParser.AssignVariableContext(self, self._ctx, self.state)
+        self.enterRule(localctx, 2, self.RULE_assignVariable)
+        try:
+            self.state = 27
+            self._errHandler.sync(self)
+            token = self._input.LA(1)
+            if token in [mParser.T__8]:
+                localctx = mParser.AssignExprContext(self, localctx)
+                self.enterOuterAlt(localctx, 1)
+                self.state = 19
+                localctx.type = self.typeSpecifier()
+                self.state = 20
+                localctx.name = self.match(mParser.WORD)
+                self.state = 21
+                self.match(mParser.T__1)
+                self.state = 22
+                localctx.value = self.expr(0)
+                pass
+            elif token in [mParser.WORD]:
+                localctx = mParser.AssignVarContext(self, localctx)
+                self.enterOuterAlt(localctx, 2)
+                self.state = 24
+                localctx.name = self.match(mParser.WORD)
+                self.state = 25
+                self.match(mParser.T__1)
+                self.state = 26
+                localctx.value = self.expr(0)
+                pass
+            else:
+                raise NoViableAltException(self)
+
+        except RecognitionException as re:
+            localctx.exception = re
+            self._errHandler.reportError(self, re)
+            self._errHandler.recover(self, re)
+        finally:
+            self.exitRule()
+        return localctx
+
+
+    class SegmentContext(ParserRuleContext):
+        __slots__ = 'parser'
+
+        def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
+            super().__init__(parent, invokingState)
+            self.parser = parser
+
+
+        def getRuleIndex(self):
+            return mParser.RULE_segment
+
+     
+        def copyFrom(self, ctx:ParserRuleContext):
+            super().copyFrom(ctx)
+
+
+
+    class SegDefineContext(SegmentContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a mParser.SegmentContext
+            super().__init__(parser)
+            self.copyFrom(ctx)
+
+        def defineVariable(self):
+            return self.getTypedRuleContext(mParser.DefineVariableContext,0)
+
+
+        def enterRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "enterSegDefine" ):
+                listener.enterSegDefine(self)
+
+        def exitRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "exitSegDefine" ):
+                listener.exitSegDefine(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitSegDefine" ):
+                return visitor.visitSegDefine(self)
+            else:
+                return visitor.visitChildren(self)
+
+
+    class SegAssignContext(SegmentContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a mParser.SegmentContext
+            super().__init__(parser)
+            self.copyFrom(ctx)
+
+        def assignVariable(self):
+            return self.getTypedRuleContext(mParser.AssignVariableContext,0)
+
+
+        def enterRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "enterSegAssign" ):
+                listener.enterSegAssign(self)
+
+        def exitRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "exitSegAssign" ):
+                listener.exitSegAssign(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitSegAssign" ):
+                return visitor.visitSegAssign(self)
+            else:
+                return visitor.visitChildren(self)
+
+
+
+    def segment(self):
+
+        localctx = mParser.SegmentContext(self, self._ctx, self.state)
+        self.enterRule(localctx, 4, self.RULE_segment)
+        try:
+            self.state = 31
+            self._errHandler.sync(self)
+            la_ = self._interp.adaptivePredict(self._input,2,self._ctx)
+            if la_ == 1:
+                localctx = mParser.SegAssignContext(self, localctx)
+                self.enterOuterAlt(localctx, 1)
+                self.state = 29
+                self.assignVariable()
+                pass
+
+            elif la_ == 2:
+                localctx = mParser.SegDefineContext(self, localctx)
+                self.enterOuterAlt(localctx, 2)
+                self.state = 30
+                self.defineVariable()
+                pass
+
+
+        except RecognitionException as re:
+            localctx.exception = re
+            self._errHandler.reportError(self, re)
+            self._errHandler.recover(self, re)
+        finally:
+            self.exitRule()
+        return localctx
+
+
+    class ExprContext(ParserRuleContext):
+        __slots__ = 'parser'
+
+        def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
+            super().__init__(parent, invokingState)
+            self.parser = parser
+
+
+        def getRuleIndex(self):
+            return mParser.RULE_expr
+
+     
+        def copyFrom(self, ctx:ParserRuleContext):
+            super().copyFrom(ctx)
+
+
+    class NumberExprContext(ExprContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a mParser.ExprContext
+            super().__init__(parser)
+            self.atom = None # Token
+            self.copyFrom(ctx)
+
+        def INT(self):
+            return self.getToken(mParser.INT, 0)
+
+        def enterRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "enterNumberExpr" ):
+                listener.enterNumberExpr(self)
+
+        def exitRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "exitNumberExpr" ):
+                listener.exitNumberExpr(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitNumberExpr" ):
+                return visitor.visitNumberExpr(self)
+            else:
+                return visitor.visitChildren(self)
+
+
+    class ByeExprContext(ExprContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a mParser.ExprContext
+            super().__init__(parser)
+            self.atom = None # Token
+            self.copyFrom(ctx)
+
+        def BYE(self):
+            return self.getToken(mParser.BYE, 0)
+
+        def enterRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "enterByeExpr" ):
+                listener.enterByeExpr(self)
+
+        def exitRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "exitByeExpr" ):
+                listener.exitByeExpr(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitByeExpr" ):
+                return visitor.visitByeExpr(self)
+            else:
+                return visitor.visitChildren(self)
+
+
+    class HelloExprContext(ExprContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a mParser.ExprContext
+            super().__init__(parser)
+            self.atom = None # Token
+            self.copyFrom(ctx)
+
+        def HELLO(self):
+            return self.getToken(mParser.HELLO, 0)
+
+        def enterRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "enterHelloExpr" ):
+                listener.enterHelloExpr(self)
+
+        def exitRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "exitHelloExpr" ):
+                listener.exitHelloExpr(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitHelloExpr" ):
+                return visitor.visitHelloExpr(self)
+            else:
+                return visitor.visitChildren(self)
+
+
+    class VariableExprContext(ExprContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a mParser.ExprContext
+            super().__init__(parser)
+            self.atom = None # Token
+            self.copyFrom(ctx)
+
+        def WORD(self):
+            return self.getToken(mParser.WORD, 0)
+
+        def enterRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "enterVariableExpr" ):
+                listener.enterVariableExpr(self)
+
+        def exitRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "exitVariableExpr" ):
+                listener.exitVariableExpr(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitVariableExpr" ):
+                return visitor.visitVariableExpr(self)
+            else:
+                return visitor.visitChildren(self)
+
+
+    class ParenExprContext(ExprContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a mParser.ExprContext
+            super().__init__(parser)
+            self.copyFrom(ctx)
+
+        def expr(self):
+            return self.getTypedRuleContext(mParser.ExprContext,0)
+
+
+        def enterRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "enterParenExpr" ):
+                listener.enterParenExpr(self)
+
+        def exitRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "exitParenExpr" ):
+                listener.exitParenExpr(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitParenExpr" ):
+                return visitor.visitParenExpr(self)
+            else:
+                return visitor.visitChildren(self)
+
+
+    class InfixExprContext(ExprContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a mParser.ExprContext
+            super().__init__(parser)
+            self.left = None # ExprContext
+            self.op = None # Token
+            self.right = None # ExprContext
+            self.copyFrom(ctx)
+
+        def expr(self, i:int=None):
+            if i is None:
+                return self.getTypedRuleContexts(mParser.ExprContext)
+            else:
+                return self.getTypedRuleContext(mParser.ExprContext,i)
+
+
+        def enterRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "enterInfixExpr" ):
+                listener.enterInfixExpr(self)
+
+        def exitRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "exitInfixExpr" ):
+                listener.exitInfixExpr(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitInfixExpr" ):
+                return visitor.visitInfixExpr(self)
+            else:
+                return visitor.visitChildren(self)
+
+
+
+    def expr(self, _p:int=0):
+        _parentctx = self._ctx
+        _parentState = self.state
+        localctx = mParser.ExprContext(self, self._ctx, _parentState)
+        _prevctx = localctx
+        _startState = 6
+        self.enterRecursionRule(localctx, 6, self.RULE_expr, _p)
+        self._la = 0 # Token type
+        try:
+            self.enterOuterAlt(localctx, 1)
+            self.state = 42
+            self._errHandler.sync(self)
+            token = self._input.LA(1)
+            if token in [mParser.INT]:
+                localctx = mParser.NumberExprContext(self, localctx)
+                self._ctx = localctx
+                _prevctx = localctx
+
+                self.state = 34
+                localctx.atom = self.match(mParser.INT)
+                pass
+            elif token in [mParser.T__6]:
+                localctx = mParser.ParenExprContext(self, localctx)
+                self._ctx = localctx
+                _prevctx = localctx
+                self.state = 35
+                self.match(mParser.T__6)
+                self.state = 36
+                self.expr(0)
+                self.state = 37
+                self.match(mParser.T__7)
+                pass
+            elif token in [mParser.WORD]:
+                localctx = mParser.VariableExprContext(self, localctx)
+                self._ctx = localctx
+                _prevctx = localctx
+                self.state = 39
+                localctx.atom = self.match(mParser.WORD)
+                pass
+            elif token in [mParser.HELLO]:
+                localctx = mParser.HelloExprContext(self, localctx)
+                self._ctx = localctx
+                _prevctx = localctx
+                self.state = 40
+                localctx.atom = self.match(mParser.HELLO)
+                pass
+            elif token in [mParser.BYE]:
+                localctx = mParser.ByeExprContext(self, localctx)
+                self._ctx = localctx
+                _prevctx = localctx
+                self.state = 41
+                localctx.atom = self.match(mParser.BYE)
+                pass
+            else:
+                raise NoViableAltException(self)
+
+            self._ctx.stop = self._input.LT(-1)
+            self.state = 52
+            self._errHandler.sync(self)
+            _alt = self._interp.adaptivePredict(self._input,5,self._ctx)
+            while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
+                if _alt==1:
+                    if self._parseListeners is not None:
+                        self.triggerExitRuleEvent()
+                    _prevctx = localctx
+                    self.state = 50
+                    self._errHandler.sync(self)
+                    la_ = self._interp.adaptivePredict(self._input,4,self._ctx)
+                    if la_ == 1:
+                        localctx = mParser.InfixExprContext(self, mParser.ExprContext(self, _parentctx, _parentState))
+                        localctx.left = _prevctx
+                        self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
+                        self.state = 44
+                        if not self.precpred(self._ctx, 7):
+                            from antlr4.error.Errors import FailedPredicateException
+                            raise FailedPredicateException(self, "self.precpred(self._ctx, 7)")
+                        self.state = 45
+                        localctx.op = self._input.LT(1)
+                        _la = self._input.LA(1)
+                        if not(_la==mParser.T__2 or _la==mParser.T__3):
+                            localctx.op = self._errHandler.recoverInline(self)
+                        else:
+                            self._errHandler.reportMatch(self)
+                            self.consume()
+                        self.state = 46
+                        localctx.right = self.expr(8)
+                        pass
+
+                    elif la_ == 2:
+                        localctx = mParser.InfixExprContext(self, mParser.ExprContext(self, _parentctx, _parentState))
+                        localctx.left = _prevctx
+                        self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
+                        self.state = 47
+                        if not self.precpred(self._ctx, 6):
+                            from antlr4.error.Errors import FailedPredicateException
+                            raise FailedPredicateException(self, "self.precpred(self._ctx, 6)")
+                        self.state = 48
+                        localctx.op = self._input.LT(1)
+                        _la = self._input.LA(1)
+                        if not(_la==mParser.T__4 or _la==mParser.T__5):
+                            localctx.op = self._errHandler.recoverInline(self)
+                        else:
+                            self._errHandler.reportMatch(self)
+                            self.consume()
+                        self.state = 49
+                        localctx.right = self.expr(7)
+                        pass
+
+             
+                self.state = 54
+                self._errHandler.sync(self)
+                _alt = self._interp.adaptivePredict(self._input,5,self._ctx)
+
+        except RecognitionException as re:
+            localctx.exception = re
+            self._errHandler.reportError(self, re)
+            self._errHandler.recover(self, re)
+        finally:
+            self.unrollRecursionContexts(_parentctx)
+        return localctx
+
+
+    class DefineVariableContext(ParserRuleContext):
+        __slots__ = 'parser'
+
+        def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
+            super().__init__(parent, invokingState)
+            self.parser = parser
+
+
+        def getRuleIndex(self):
+            return mParser.RULE_defineVariable
+
+     
+        def copyFrom(self, ctx:ParserRuleContext):
+            super().copyFrom(ctx)
+
+
+
+    class DefineVarContext(DefineVariableContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a mParser.DefineVariableContext
+            super().__init__(parser)
+            self.type = None # TypeSpecifierContext
+            self.name = None # Token
+            self.copyFrom(ctx)
+
+        def typeSpecifier(self):
+            return self.getTypedRuleContext(mParser.TypeSpecifierContext,0)
+
+        def WORD(self):
+            return self.getToken(mParser.WORD, 0)
+
+        def enterRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "enterDefineVar" ):
+                listener.enterDefineVar(self)
+
+        def exitRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "exitDefineVar" ):
+                listener.exitDefineVar(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitDefineVar" ):
+                return visitor.visitDefineVar(self)
+            else:
+                return visitor.visitChildren(self)
+
+
+
+    def defineVariable(self):
+
+        localctx = mParser.DefineVariableContext(self, self._ctx, self.state)
+        self.enterRule(localctx, 8, self.RULE_defineVariable)
+        try:
+            localctx = mParser.DefineVarContext(self, localctx)
+            self.enterOuterAlt(localctx, 1)
+            self.state = 55
+            localctx.type = self.typeSpecifier()
+            self.state = 56
+            localctx.name = self.match(mParser.WORD)
+        except RecognitionException as re:
+            localctx.exception = re
+            self._errHandler.reportError(self, re)
+            self._errHandler.recover(self, re)
+        finally:
+            self.exitRule()
+        return localctx
+
+
+    class TypeSpecifierContext(ParserRuleContext):
+        __slots__ = 'parser'
+
+        def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
+            super().__init__(parent, invokingState)
+            self.parser = parser
+
+
+        def getRuleIndex(self):
+            return mParser.RULE_typeSpecifier
+
+        def enterRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "enterTypeSpecifier" ):
+                listener.enterTypeSpecifier(self)
+
+        def exitRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "exitTypeSpecifier" ):
+                listener.exitTypeSpecifier(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitTypeSpecifier" ):
+                return visitor.visitTypeSpecifier(self)
+            else:
+                return visitor.visitChildren(self)
+
+
+
+
+    def typeSpecifier(self):
+
+        localctx = mParser.TypeSpecifierContext(self, self._ctx, self.state)
+        self.enterRule(localctx, 10, self.RULE_typeSpecifier)
+        try:
+            self.enterOuterAlt(localctx, 1)
+            self.state = 58
+            self.match(mParser.T__8)
+        except RecognitionException as re:
+            localctx.exception = re
+            self._errHandler.reportError(self, re)
+            self._errHandler.recover(self, re)
+        finally:
+            self.exitRule()
+        return localctx
+
+
+
+    def sempred(self, localctx:RuleContext, ruleIndex:int, predIndex:int):
+        if self._predicates == None:
+            self._predicates = dict()
+        self._predicates[3] = self.expr_sempred
+        pred = self._predicates.get(ruleIndex, None)
+        if pred is None:
+            raise Exception("No predicate with index:" + str(ruleIndex))
+        else:
+            return pred(localctx, predIndex)
+
+    def expr_sempred(self, localctx:ExprContext, predIndex:int):
+            if predIndex == 0:
+                return self.precpred(self._ctx, 7)
+         
+
+            if predIndex == 1:
+                return self.precpred(self._ctx, 6)
+         
+
+
+
+
