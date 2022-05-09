@@ -139,7 +139,7 @@ class MyVisitor(mVisitor):
 if __name__ == "__main__":
     
     #data =  InputStream(input(">>> "))
-    text = open("words.c").read()
+    text = open(sys.argv[1]).read()
     data = InputStream(text)
 
     # lexer
@@ -155,7 +155,7 @@ if __name__ == "__main__":
     printer = mListener()
     walker = ParseTreeWalker()
 
-    out = open("output.txt", "w")
+    out = open(sys.argv[2], "w")
 
     walker.walk(printer, tree)
 
