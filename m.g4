@@ -17,6 +17,7 @@ expr: left=expr op=('*'|'/') right=expr        # InfixExpr
     | left=expr op=('+'|'-') right=expr        # InfixExpr           
     | atom=INT                                 # NumberExpr
     | '(' expr ')'                             # ParenExpr
+    | atom=WORD                                # VariableExpr
     ;
 
 defineVariable: type=typeSpecifier name=WORD             #DefineVar;
