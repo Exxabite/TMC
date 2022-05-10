@@ -4,21 +4,61 @@ from multiprocessing.dummy.connection import Listener
 from operator import contains
 import string
 import sys
+import pickle
 from antlr4 import *
 from dist.mLexer import mLexer
 from dist.mParser import mParser
 from dist.mVisitor import mVisitor
 
 
-def get_username():
-    from pwd import getpwuid
-    from os import getuid
-    return getpwuid(getuid())[ 0 ]
 
-#int : 0
-variables = {
-    "default" : 0
+variable = {
+    "int" : 0
 }
+
+variables = {
+    "eax" : 0,
+    "ebx" : 0,
+    "ecx" : 0,
+    "edx" : 0
+}
+
+operation = {
+    "mov" : 0,
+    "add" : 1,
+    "sub" : 2,
+    "mul" : 3,
+    "div" : 4,
+    "push": 5,
+    "pop" : 6
+}
+
+output = []
+
+class instr:
+    def mov(operand1, operand2):
+        return [[0, [operand1, operand2]]]
+    def add(operand1, operand2):
+        return [[1, [operand1, operand2]]]
+    def sub(operand1, operand2):
+        return [[2, [operand1, operand2]]]
+    def mul(operand1, operand2):
+        return [[3, [operand1, operand2]]]
+    def div(operand1, operand2):
+        return [[4, [operand1, operand2]]]
+    def push(operand1):
+        return [[5, operand1]]
+    def pop(operand1):
+        return [[6, operand1]]
+
+def append(input):
+    global output
+    output += input
+
+def newOp(op, operands):
+    global output
+    output += [[operation[op], operands]]
+
 
 
 class mListener(ParseTreeListener):
@@ -27,13 +67,15 @@ class mListener(ParseTreeListener):
 
         name = ctx.getChild(1)
         value = visitor.visit(ctx.value)
-
+        
         variables[str(name)] = 0 #SAFTEY!
 
         if value.isdigit():
             out.write("mov " + str(name) + ", " + value + "\n")
+            append(instr.mov(str(name), int(value)))
         else:
             out.write(value + "mov " + str(name) + ", eax\n")
+            append(instr.mov(str(name), "eax"))
 
     def enterAssignVar(self, ctx:mParser.AssignExprContext):
         visitor = MyVisitor()
@@ -41,13 +83,19 @@ class mListener(ParseTreeListener):
         name = str(ctx.getChild(0))
         value = visitor.visit(ctx.value)
 
+
         if name not in variables.keys():
             raise Exception(name + " is undefined")
 
-        if not " " in value:
-            out.write("mov " + name + ", " + value + "\n")
+        if type(value) != list:
+            #out.write("mov " + name + ", " + value + "\n")
+            #newOp("mov", [str(name), int(value)])
+            append(instr.mov(name, int(value)))
         else:
-            out.write(value + "mov " + name + ", eax\n")
+            #out.write(value + "mov " + name + ", eax\n")
+            #newOp("mov", [str(name), "eax"])
+            append(value)
+            append(instr.mov(name, "eax"))
 
     def enterDefineVar(self, ctx:mParser.DefineVarContext):
         #Add saftey!!!
@@ -100,40 +148,43 @@ class MyVisitor(mVisitor):
 
         #print(str(Ltype) + ", " + str(Rtype))
 
-        operation =  {
-        '+': lambda: l + r,
-        '-': lambda: l - r,
-        '*': lambda: l * r,
-        '/': lambda: l / r,
-        }
         
 
-        operationTxt =  {
-        '+': "add ",
-        '-': "sub ",
-        '*': "mul ",
-        '/': "div ",
+        operationFunc =  {
+        '+': instr.add,
+        '-': instr.sub,
+        '*': instr.mul,
+        '/': instr.div,
         }
 
-        
+        expression = []
 
-        if not " " in l and not " " in r:
-            return "mov eax, " + l + "\n" + operationTxt.get(op) + "eax, " + r + "\n"
-        elif " " in l and not " " in r:
-            return l  + operationTxt.get(op) + "eax, " + r + "\n"
-        elif not " " in l and " " in r:
-            return r  + operationTxt.get(op) + "eax, " + l + "\n"
-        elif " " in l and " " in r:
-            return l + "push eax\n" + r + "pop ebx\n" + operationTxt.get(op) + "ebx, eax\nmov eax, ebx\n"
 
-        #return operation.get(op, lambda: None)()
 
-    def visitByeExpr(self, ctx):
-        print(f"goodbye {get_username()}")
-        sys.exit(0)
+        if type(l) != list and type(r) != list:
+            #expression += [[operation["mov"], ["eax", l]]]
+            expression += instr.mov("eax", l)
+            #expression += [[operationTxt[op], ["eax", r]]]
+            expression += operationFunc[op]("eax", r)
 
-    def visitHelloExpr(self, ctx):
-        return (f"{ctx.getText()} {get_username()}")
+        elif type(l) == list and type(r) != list:
+            expression += l
+            #expression += [[operationTxt[op], ["eax", r]]]
+            expression += operationFunc[op]("eax", r)
+            
+        elif type(l) != list and type(r) == list:
+            expression += r
+            #expression += [[operationTxt[op], ["eax", l]]]
+            expression += operationFunc[op]("eax", l)
+
+        elif type(l) == list and type(r) == list:
+            expression += l
+            expression += instr.push("eax")
+            expression += r
+            expression += instr.pop("ebx")
+            expression += operationFunc[op]("ebx", "eax")
+            expression += instr.mov("eax", "ebx")
+        return expression
 
 
 if __name__ == "__main__":
@@ -156,9 +207,13 @@ if __name__ == "__main__":
     walker = ParseTreeWalker()
 
     out = open(sys.argv[2], "w")
+    
+    with open(sys.argv[1] + ".pickle", 'wb') as fp:
+        pickle.dump(output, fp)
 
     walker.walk(printer, tree)
 
     out.close()
     #output = visitor.visit(tree)
-    #print(output)
+    for line in output:
+        print(line)
