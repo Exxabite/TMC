@@ -4,7 +4,7 @@ from multiprocessing.dummy.connection import Listener
 from operator import contains
 import string
 import sys
-import pickle
+import json
 from antlr4 import *
 from dist.mLexer import mLexer
 from dist.mParser import mParser
@@ -208,10 +208,11 @@ if __name__ == "__main__":
 
     out = open(sys.argv[2], "w")
     
-    with open(sys.argv[1] + ".pickle", 'wb') as fp:
-        pickle.dump(output, fp)
 
     walker.walk(printer, tree)
+
+    with open(sys.argv[1] + ".json", 'w') as fp:
+        json.dump(output, fp)
 
     out.close()
     #output = visitor.visit(tree)

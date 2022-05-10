@@ -5,3 +5,4 @@
 *.c
 *.m
 *.pickle
+*.pyc
