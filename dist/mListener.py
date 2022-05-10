@@ -62,33 +62,6 @@ class mListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by mParser#ByeExpr.
-    def enterByeExpr(self, ctx:mParser.ByeExprContext):
-        pass
-
-    # Exit a parse tree produced by mParser#ByeExpr.
-    def exitByeExpr(self, ctx:mParser.ByeExprContext):
-        pass
-
-
-    # Enter a parse tree produced by mParser#HelloExpr.
-    def enterHelloExpr(self, ctx:mParser.HelloExprContext):
-        pass
-
-    # Exit a parse tree produced by mParser#HelloExpr.
-    def exitHelloExpr(self, ctx:mParser.HelloExprContext):
-        pass
-
-
-    # Enter a parse tree produced by mParser#VariableExpr.
-    def enterVariableExpr(self, ctx:mParser.VariableExprContext):
-        pass
-
-    # Exit a parse tree produced by mParser#VariableExpr.
-    def exitVariableExpr(self, ctx:mParser.VariableExprContext):
-        pass
-
-
     # Enter a parse tree produced by mParser#ParenExpr.
     def enterParenExpr(self, ctx:mParser.ParenExprContext):
         pass

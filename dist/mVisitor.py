@@ -39,21 +39,6 @@ class mVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by mParser#ByeExpr.
-    def visitByeExpr(self, ctx:mParser.ByeExprContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by mParser#HelloExpr.
-    def visitHelloExpr(self, ctx:mParser.HelloExprContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by mParser#VariableExpr.
-    def visitVariableExpr(self, ctx:mParser.VariableExprContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by mParser#ParenExpr.
     def visitParenExpr(self, ctx:mParser.ParenExprContext):
         return self.visitChildren(ctx)
