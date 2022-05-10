@@ -5,6 +5,7 @@ from operator import contains
 import string
 import sys
 import json
+from codeGeneration import generateFunctions
 from antlr4 import *
 from dist.mLexer import mLexer
 from dist.mParser import mParser
@@ -70,11 +71,11 @@ class mListener(ParseTreeListener):
         
         variables[str(name)] = 0 #SAFTEY!
 
-        if value.isdigit():
-            out.write("mov " + str(name) + ", " + value + "\n")
+        if type(value) == int:
+            #out.write("mov " + str(name) + ", " + str(value) + "\n")
             append(instr.mov(str(name), int(value)))
         else:
-            out.write(value + "mov " + str(name) + ", eax\n")
+            #out.write(value + "mov " + str(name) + ", eax\n")
             append(instr.mov(str(name), "eax"))
 
     def enterAssignVar(self, ctx:mParser.AssignExprContext):
@@ -120,7 +121,7 @@ class MyVisitor(mVisitor):
         value = ctx.getText()
         #return "mov TMP, " + value + "\n"
         #return "s_push " + value + "\n"
-        return value
+        return int(value)
 
     def visitVariableExpr(self, ctx: mParser.VariableExprContext):
         name = ctx.getText()
@@ -214,7 +215,11 @@ if __name__ == "__main__":
     with open(sys.argv[1] + ".json", 'w') as fp:
         json.dump(output, fp)
 
+    out.write(generateFunctions(output, "exxabite:data", "system"))
+
     out.close()
+
+
     #output = visitor.visit(tree)
     for line in output:
         print(line)
