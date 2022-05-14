@@ -6,6 +6,7 @@ import string
 import sys
 import json
 from codeGeneration import generateFunctions
+from optimization import optimize
 from antlr4 import *
 from dist.mLexer import mLexer
 from dist.mParser import mParser
@@ -48,9 +49,9 @@ class instr:
     def div(operand1, operand2):
         return [[4, [operand1, operand2]]]
     def push(operand1):
-        return [[5, operand1]]
+        return [[5, [operand1]]]
     def pop(operand1):
-        return [[6, operand1]]
+        return [[6, [operand1]]]
 
 def append(input):
     global output
@@ -212,14 +213,21 @@ if __name__ == "__main__":
 
     walker.walk(printer, tree)
 
-    with open(sys.argv[1] + ".json", 'w') as fp:
-        json.dump(output, fp)
+    optimizedOutput = optimize(output)
 
-    out.write(generateFunctions(output, "exxabite:data", "system"))
+    with open(sys.argv[1] + ".json", 'w') as fp:
+        json.dump(optimizedOutput, fp)
+
+
+    out.write(generateFunctions(optimizedOutput, "exxabite:data", "system"))
 
     out.close()
 
-
-    #output = visitor.visit(tree)
     for line in output:
+        print(line)
+
+
+    print("\n" + str(len(output)) + "\nOptimized:\n" + str(len(optimizedOutput)) + "\n")
+
+    for line in optimizedOutput:
         print(line)

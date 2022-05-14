@@ -40,8 +40,8 @@ def generateFunctions(input, namespace, scoreboard):
 
         if op[0] == 0: out = mov(op[1][0], op[1][1])
         if 1 <= op[0] <= 4: out = arithmatic(op[0], op[1][0], op[1][1])
-        if op[0] == 5: out = push(op[1])
-        if op[0] == 6: out = pop(op[1])
+        if op[0] == 5: out = push(op[1][0])
+        if op[0] == 6: out = pop(op[1][0])
 
         output += out + "\n"
     return output
