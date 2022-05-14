@@ -213,6 +213,9 @@ if __name__ == "__main__":
 
     walker.walk(printer, tree)
 
+    for line in output:
+        print(line)
+
     optimizedOutput = optimize(output)
 
     with open(sys.argv[1] + ".json", 'w') as fp:
@@ -223,11 +226,9 @@ if __name__ == "__main__":
 
     out.close()
 
-    for line in output:
-        print(line)
 
 
-    print("\n" + str(len(output)) + "\nOptimized:\n" + str(len(optimizedOutput)) + "\n")
+    print("\nOptimized:\n")
 
     for line in optimizedOutput:
         print(line)
