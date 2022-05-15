@@ -37,6 +37,8 @@ operation = {
 
 output = []
 
+functions = {}
+
 class instr:
     def mov(operand1, operand2):
         return [[0, [operand1, operand2]]]
@@ -111,6 +113,15 @@ class mListener(ParseTreeListener):
         print("Begin func " + name)
         pass
 
+    def exitFunctionDefinition(self, ctx:mParser.FunctionDefinitionContext):
+        global functions
+        global output
+        name = str(ctx.getChild(1))
+        functions[name] = output
+        output = []
+        
+        pass
+
     def enterParam(self, ctx:mParser.ParamContext):
 
         type = str(ctx.getChild(0))
@@ -121,9 +132,12 @@ class mListener(ParseTreeListener):
         if type == 'int': variables[name] = 0
 
     def enterReturnStatement(self, ctx:mParser.ReturnStatementContext):
-        var = str(ctx.getChild(1))
+        value = visitor.visit(ctx.value)
 
-        append(instr.mov("eax", var))
+        if type(value) != list:
+            append(instr.mov("eax", int(value)))
+        else:
+            append(value)
         pass
 
 class MyVisitor(mVisitor):
@@ -230,7 +244,7 @@ if __name__ == "__main__":
     printer = mListener()
     walker = ParseTreeWalker()
 
-    out = open(sys.argv[2], "w")
+    #out = open(sys.argv[2], "w")
     
 
     walker.walk(printer, tree)
@@ -243,10 +257,17 @@ if __name__ == "__main__":
     with open(sys.argv[1] + ".json", 'w') as fp:
         json.dump(optimizedOutput, fp)
 
+    print(functions)
 
-    out.write(generateFunctions(optimizedOutput, "exxabite:data", "system"))
+    print(variables)
 
-    out.close()
+    for func in functions:
+        file = open(sys.argv[2] + func + ".mcfunction", "w")
+        file.write(generateFunctions(functions[func], "exxabite:data", "system"))
+
+    #out.write(generateFunctions(optimizedOutput, "exxabite:data", "system"))
+
+    #out.close()
 
 
 

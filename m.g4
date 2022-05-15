@@ -39,7 +39,7 @@ compoundStatement
 
 param: type=typeSpecifier name=WORD;
 
-returnStatement: 'return' name=WORD;
+returnStatement: 'return' value=expr;
 
 paramList
     :   param (',' param)*

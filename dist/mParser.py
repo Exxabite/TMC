@@ -40,7 +40,7 @@ def serializedATN():
         buf.write("\2LM\7\13\2\2M\21\3\2\2\2NR\7\f\2\2OQ\5\b\5\2PO\3\2\2")
         buf.write("\2QT\3\2\2\2RP\3\2\2\2RS\3\2\2\2SU\3\2\2\2TR\3\2\2\2U")
         buf.write("V\7\r\2\2V\23\3\2\2\2WX\5\20\t\2XY\7\24\2\2Y\25\3\2\2")
-        buf.write("\2Z[\7\16\2\2[\\\7\24\2\2\\\27\3\2\2\2]b\5\24\13\2^_\7")
+        buf.write("\2Z[\7\16\2\2[\\\5\f\7\2\\\27\3\2\2\2]b\5\24\13\2^_\7")
         buf.write("\17\2\2_a\5\24\13\2`^\3\2\2\2ad\3\2\2\2b`\3\2\2\2bc\3")
         buf.write("\2\2\2c\31\3\2\2\2db\3\2\2\2ef\5\20\t\2fg\7\24\2\2gi\7")
         buf.write("\t\2\2hj\5\30\r\2ih\3\2\2\2ij\3\2\2\2jk\3\2\2\2kl\7\n")
@@ -1009,10 +1009,11 @@ class mParser ( Parser ):
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
             self.parser = parser
-            self.name = None # Token
+            self.value = None # ExprContext
 
-        def WORD(self):
-            return self.getToken(mParser.WORD, 0)
+        def expr(self):
+            return self.getTypedRuleContext(mParser.ExprContext,0)
+
 
         def getRuleIndex(self):
             return mParser.RULE_returnStatement
@@ -1043,7 +1044,7 @@ class mParser ( Parser ):
             self.state = 88
             self.match(mParser.T__11)
             self.state = 89
-            localctx.name = self.match(mParser.WORD)
+            localctx.value = self.expr(0)
         except RecognitionException as re:
             localctx.exception = re
             self._errHandler.reportError(self, re)
