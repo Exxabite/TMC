@@ -104,6 +104,28 @@ class mListener(ParseTreeListener):
         name = str(ctx.getChild(1))
         variables[name] = 0
 
+    def enterFunctionDefinition(self, ctx:mParser.FunctionDefinitionContext):
+        name = str(ctx.getChild(1))
+
+        #append(["Begin func " + name])
+        print("Begin func " + name)
+        pass
+
+    def enterParam(self, ctx:mParser.ParamContext):
+
+        type = str(ctx.getChild(0))
+        name = str(ctx.getChild(1))
+
+        append(instr.pop(name))
+
+        if type == 'int': variables[name] = 0
+
+    def enterReturnStatement(self, ctx:mParser.ReturnStatementContext):
+        var = str(ctx.getChild(1))
+
+        append(instr.mov("eax", var))
+        pass
+
 class MyVisitor(mVisitor):
 
     #def visitMainExp(self, ctx):
@@ -228,7 +250,7 @@ if __name__ == "__main__":
 
 
 
-    print("\nOptimized:\n")
+    print("\nOptimized:\n" )
 
     for line in optimizedOutput:
         print(line)

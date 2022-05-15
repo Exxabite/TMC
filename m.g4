@@ -1,6 +1,6 @@
 grammar m;
 
-main: (segment ';')+                            #MainExp;
+main: (functions)+                            #MainExp;
     
 
 assignVariable 
@@ -8,9 +8,16 @@ assignVariable
     | name=WORD '=' value=expr                        #AssignVar
     ; 
 
-segment
+functions
+    : functionDefinition
+    ;
+
+operation: opera ';';
+
+opera
     : assignVariable                           #SegAssign
     | defineVariable                           #SegDefine
+    | returnStatement                          #retStatement
     ;
 
 expr: left=expr op=('*'|'/') right=expr        # InfixExpr
@@ -24,6 +31,22 @@ defineVariable: type=typeSpecifier name=WORD             #DefineVar;
 
 typeSpecifier
     : 'int'                                    
+    ;
+
+compoundStatement
+    :   '{' operation* '}'
+    ;
+
+param: type=typeSpecifier name=WORD;
+
+returnStatement: 'return' name=WORD;
+
+paramList
+    :   param (',' param)*
+    ;
+
+functionDefinition
+    :   typeSpecifier name=WORD '(' paramList? ')' compoundStatement
     ;
 
 INT  : [0-9]+         ;

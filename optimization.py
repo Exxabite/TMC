@@ -133,7 +133,7 @@ def optimize(code):
     while success > 0:
         success = False
         
-        success = constantEvaluation()
+        #success = constantEvaluation()
         #success += removeUnusedVar()
         success += peephole()
 

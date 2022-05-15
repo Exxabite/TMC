@@ -24,6 +24,16 @@ class mVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by mParser#functions.
+    def visitFunctions(self, ctx:mParser.FunctionsContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by mParser#operation.
+    def visitOperation(self, ctx:mParser.OperationContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by mParser#SegAssign.
     def visitSegAssign(self, ctx:mParser.SegAssignContext):
         return self.visitChildren(ctx)
@@ -31,6 +41,11 @@ class mVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by mParser#SegDefine.
     def visitSegDefine(self, ctx:mParser.SegDefineContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by mParser#retStatement.
+    def visitRetStatement(self, ctx:mParser.RetStatementContext):
         return self.visitChildren(ctx)
 
 
@@ -61,6 +76,31 @@ class mVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by mParser#typeSpecifier.
     def visitTypeSpecifier(self, ctx:mParser.TypeSpecifierContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by mParser#compoundStatement.
+    def visitCompoundStatement(self, ctx:mParser.CompoundStatementContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by mParser#param.
+    def visitParam(self, ctx:mParser.ParamContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by mParser#returnStatement.
+    def visitReturnStatement(self, ctx:mParser.ReturnStatementContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by mParser#paramList.
+    def visitParamList(self, ctx:mParser.ParamListContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by mParser#functionDefinition.
+    def visitFunctionDefinition(self, ctx:mParser.FunctionDefinitionContext):
         return self.visitChildren(ctx)
 
 
