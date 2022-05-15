@@ -19,10 +19,10 @@ variable = {
 }
 
 variables = {
-    "eax" : 0,
-    "ebx" : 0,
-    "ecx" : 0,
-    "edx" : 0
+    "eax" : 100,
+    "ebx" : 100,
+    "ecx" : 100,
+    "edx" : 100
 }
 
 operation = {
@@ -119,7 +119,7 @@ class mListener(ParseTreeListener):
         name = str(ctx.getChild(1))
         functions[name] = output
         output = []
-        
+
         pass
 
     def enterParam(self, ctx:mParser.ParamContext):
@@ -128,6 +128,8 @@ class mListener(ParseTreeListener):
         name = str(ctx.getChild(1))
 
         append(instr.pop(name))
+
+        variables[name] = 0
 
         if type == 'int': variables[name] = 0
 
@@ -263,7 +265,7 @@ if __name__ == "__main__":
 
     for func in functions:
         file = open(sys.argv[2] + func + ".mcfunction", "w")
-        file.write(generateFunctions(functions[func], "exxabite:data", "system"))
+        file.write(generateFunctions(functions[func], "exxabite:data", "system", variables, func))
 
     #out.write(generateFunctions(optimizedOutput, "exxabite:data", "system"))
 

@@ -32,9 +32,14 @@ def arithmatic(op, in1, in2):
     else:
         return ("scoreboard players operation EAX system *= TMP system")
 
-def generateFunctions(input, namespace, scoreboard):
+def generateFunctions(input, namespace, scoreboard, varList, functionName):
 
     output = ""
+
+    #Convert var names to the function namespace
+    for op in input:
+        if varList[op[1][0]] == 0: op[1][0] = functionName + "_" + op[1][0]
+        if len(op[1]) > 1 and type(op[1][1]) != int and varList[op[1][1]] == 0: op[1][1] = functionName + "_" + op[1][1]
 
     for op in input:
 
