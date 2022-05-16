@@ -180,7 +180,13 @@ class mListener(ParseTreeListener):
 
     def enterCallParam(self, ctx:mParser.CallParamListContext):
         global parameterStack
-        name = str(ctx.getChild(0))
+
+        print(ctx.getChild(0))
+
+        try:
+            name = int(str(ctx.getChild(0)))
+        except:
+            name = str(ctx.getChild(0))
 
         parameterStack.append(name)
         pass

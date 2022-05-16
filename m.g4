@@ -47,7 +47,9 @@ paramList
     :   param (',' param)*
     ;
 
-callParam: name=WORD;
+callParam
+    : name=WORD
+    | INT;
 
 callParamList
     : callParam (',' callParam)*

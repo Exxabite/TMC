@@ -8,12 +8,18 @@ def mov(in1, in2):
         return "scoreboard players set "+in1+" system "+str(in2)
 
 def push(in1):
-    return ("execute store result storage "+ namespace +" TMP int 1 run scoreboard players get "+ in1 +" "+ scoreboard +"\n"
-            "data modify storage "+ namespace +" Stack prepend from storage "+ namespace +" TMP")
+    if type(in1) == str:
+        return ("execute store result storage "+ namespace +" TMP int 1 run scoreboard players get "+ in1 +" "+ scoreboard +"\n"
+                "data modify storage "+ namespace +" Stack prepend from storage "+ namespace +" TMP")
+
+    elif type(in1) == int:
+        return "data modify storage "+ namespace +" Stack prepend value " + str(in1)
 
 def pop(in1):
     return ("execute store result score "+ in1 +" system run data get storage "+ namespace +" Stack[0] 1\n"
             "data remove storage "+ namespace +" Stack[0]")
+    
+
 
 def arithmatic(op, in1, in2):
     code = { #0, 5 and 6 need to be there, I don't know why since they never seem to be used
@@ -42,8 +48,11 @@ def generateFunctions(input, namespace, scoreboard, varList, functionName):
     #Convert var names to the function namespace
     for op in input:
         if op[0] < 7:
-            if varList[op[1][0]] == 0: op[1][0] = functionName + "_" + op[1][0]
-            if len(op[1]) > 1 and type(op[1][1]) != int and varList[op[1][1]] == 0: op[1][1] = functionName + "_" + op[1][1]
+            if type(op[1][0]) != int and varList[op[1][0]] == 0:
+                op[1][0] = functionName + "_" + op[1][0]
+
+            if len(op[1]) > 1 and type(op[1][1]) != int and varList[op[1][1]] == 0:
+                op[1][1] = functionName + "_" + op[1][1]
 
     for op in input:
 
