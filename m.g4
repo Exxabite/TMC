@@ -6,6 +6,7 @@ main: (functions)+                            #MainExp;
 assignVariable 
     : type=typeSpecifier name=WORD '=' value=expr     #AssignExpr
     | name=WORD '=' value=expr                        #AssignVar
+    | name=WORD '=' functionCall                      #AssignFunction
     ; 
 
 functions
@@ -15,9 +16,10 @@ functions
 operation: opera ';';
 
 opera
-    : assignVariable                           #SegAssign
-    | defineVariable                           #SegDefine
-    | returnStatement                          #retStatement
+    : assignVariable                           
+    | defineVariable                           
+    | returnStatement                          
+    | functionCall
     ;
 
 expr: left=expr op=('*'|'/') right=expr        # InfixExpr
@@ -45,8 +47,23 @@ paramList
     :   param (',' param)*
     ;
 
+callParam: name=WORD;
+
+callParamList
+    : callParam (',' callParam)*
+    ;
+
 functionDefinition
     :   typeSpecifier name=WORD '(' paramList? ')' compoundStatement
+    ;
+
+functionCall
+    : name=WORD '(' callParamList? ')'
+    ;
+
+LineComment
+    :   '//' ~[\r\n]*
+        -> skip
     ;
 
 INT  : [0-9]+         ;

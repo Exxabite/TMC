@@ -5,7 +5,7 @@ from operator import contains
 import string
 import sys
 import json
-from codeGeneration import generateFunctions
+from codeGeneration import arithmatic, generateFunctions
 from optimization import optimize
 from antlr4 import *
 from dist.mLexer import mLexer
@@ -14,7 +14,7 @@ from dist.mVisitor import mVisitor
 
 
 
-variable = {
+types = {
     "int" : 0
 }
 
@@ -24,6 +24,10 @@ variables = {
     "ecx" : 100,
     "edx" : 100
 }
+
+functions = {}
+
+paramTemp = []
 
 operation = {
     "mov" : 0,
@@ -37,7 +41,7 @@ operation = {
 
 output = []
 
-functions = {}
+main = {}
 
 class instr:
     def mov(operand1, operand2):
@@ -54,6 +58,8 @@ class instr:
         return [[5, [operand1]]]
     def pop(operand1):
         return [[6, [operand1]]]
+    def call(operand1):
+        return [[7, [operand1]]]
 
 def append(input):
     global output
@@ -63,7 +69,7 @@ def newOp(op, operands):
     global output
     output += [[operation[op], operands]]
 
-
+parameterStack = []
 
 class mListener(ParseTreeListener):
     def enterAssignExpr(self, ctx:mParser.AssignExprContext):
@@ -91,6 +97,7 @@ class mListener(ParseTreeListener):
         if name not in variables.keys():
             raise Exception(name + " is undefined")
 
+
         if type(value) != list:
             #out.write("mov " + name + ", " + value + "\n")
             #newOp("mov", [str(name), int(value)])
@@ -101,6 +108,13 @@ class mListener(ParseTreeListener):
             append(value)
             append(instr.mov(name, "eax"))
 
+    def exitAssignFunction(self, ctx:mParser.AssignFunctionContext):
+        name = str(ctx.getChild(0))
+
+        append(instr.mov(name, 'eax'))
+
+        pass
+
     def enterDefineVar(self, ctx:mParser.DefineVarContext):
         #Add saftey!!!
         name = str(ctx.getChild(1))
@@ -109,23 +123,29 @@ class mListener(ParseTreeListener):
     def enterFunctionDefinition(self, ctx:mParser.FunctionDefinitionContext):
         name = str(ctx.getChild(1))
 
-        #append(["Begin func " + name])
-        print("Begin func " + name)
         pass
 
     def exitFunctionDefinition(self, ctx:mParser.FunctionDefinitionContext):
-        global functions
+        global main
         global output
+        global paramTemp
         name = str(ctx.getChild(1))
-        functions[name] = output
+
+        main[name] = output
         output = []
+
+        functions[name] = paramTemp
+        paramTemp = []
 
         pass
 
     def enterParam(self, ctx:mParser.ParamContext):
+        global paramTemp
 
-        type = str(ctx.getChild(0))
+        type = str(visitor.visit(ctx.type))
         name = str(ctx.getChild(1))
+
+        paramTemp.append(type)
 
         append(instr.pop(name))
 
@@ -140,6 +160,38 @@ class mListener(ParseTreeListener):
             append(instr.mov("eax", int(value)))
         else:
             append(value)
+        pass
+
+
+    def enterFunctionCall(self, ctx:mParser.FunctionCallContext):
+        global parameterStack
+        name = str(ctx.getChild(0))
+
+        if not name in functions:
+            raise Exception("No such function: " + name)
+
+        
+
+        #for param in functions[name]:
+        #    if variables[name] != param:
+        #        raise Exception("Incorrect parameter type when calling " + name)
+
+        pass
+
+    def enterCallParam(self, ctx:mParser.CallParamListContext):
+        global parameterStack
+        name = str(ctx.getChild(0))
+
+        parameterStack.append(name)
+        pass
+
+    def exitFunctionCall(self, ctx:mParser.FunctionCallContext):
+        global parameterStack
+        name = str(ctx.getChild(0))
+
+        for param in reversed(parameterStack):
+            append(instr.push(param))
+        append(instr.call(name))
         pass
 
 class MyVisitor(mVisitor):
@@ -172,6 +224,12 @@ class MyVisitor(mVisitor):
     def visitParenExpr(self, ctx):
         return self.visit(ctx.expr())
 
+    def visitTypeSpecifier(self, ctx: mParser.TypeSpecifierContext):
+        
+        type = str(ctx.getChild(0))
+
+        return types[type]
+
     def visitInfixExpr(self, ctx):
         l = self.visit(ctx.left)
         r = self.visit(ctx.right)
@@ -202,10 +260,20 @@ class MyVisitor(mVisitor):
 
 
         if type(l) != list and type(r) != list:
-            #expression += [[operation["mov"], ["eax", l]]]
-            expression += instr.mov("eax", l)
-            #expression += [[operationTxt[op], ["eax", r]]]
-            expression += operationFunc[op]("eax", r)
+
+            if type(l) == int and type(r) == int:
+                if op == '+': expression = l + r
+                if op == '-': expression = l - r
+                if op == '*': expression = l * r
+                if op == '/': expression = int(l / r)
+                
+            else:
+
+                #expression += [[operation["mov"], ["eax", l]]]
+                expression += instr.mov("eax", l)
+                #expression += [[operationTxt[op], ["eax", r]]]
+                expression += operationFunc[op]("eax", r)
+        
 
         elif type(l) == list and type(r) != list:
             expression += l
@@ -257,15 +325,16 @@ if __name__ == "__main__":
     optimizedOutput = optimize(output)
 
     with open(sys.argv[1] + ".json", 'w') as fp:
-        json.dump(optimizedOutput, fp)
+        json.dump(main, fp)
 
+    print(main)
     print(functions)
 
     print(variables)
 
-    for func in functions:
+    for func in main:
         file = open(sys.argv[2] + func + ".mcfunction", "w")
-        file.write(generateFunctions(functions[func], "exxabite:data", "system", variables, func))
+        file.write(generateFunctions(main[func], "exxabite:data", "system", variables, func))
 
     #out.write(generateFunctions(optimizedOutput, "exxabite:data", "system"))
 

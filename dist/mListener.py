@@ -35,6 +35,15 @@ class mListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by mParser#AssignFunction.
+    def enterAssignFunction(self, ctx:mParser.AssignFunctionContext):
+        pass
+
+    # Exit a parse tree produced by mParser#AssignFunction.
+    def exitAssignFunction(self, ctx:mParser.AssignFunctionContext):
+        pass
+
+
     # Enter a parse tree produced by mParser#functions.
     def enterFunctions(self, ctx:mParser.FunctionsContext):
         pass
@@ -53,30 +62,12 @@ class mListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by mParser#SegAssign.
-    def enterSegAssign(self, ctx:mParser.SegAssignContext):
+    # Enter a parse tree produced by mParser#opera.
+    def enterOpera(self, ctx:mParser.OperaContext):
         pass
 
-    # Exit a parse tree produced by mParser#SegAssign.
-    def exitSegAssign(self, ctx:mParser.SegAssignContext):
-        pass
-
-
-    # Enter a parse tree produced by mParser#SegDefine.
-    def enterSegDefine(self, ctx:mParser.SegDefineContext):
-        pass
-
-    # Exit a parse tree produced by mParser#SegDefine.
-    def exitSegDefine(self, ctx:mParser.SegDefineContext):
-        pass
-
-
-    # Enter a parse tree produced by mParser#retStatement.
-    def enterRetStatement(self, ctx:mParser.RetStatementContext):
-        pass
-
-    # Exit a parse tree produced by mParser#retStatement.
-    def exitRetStatement(self, ctx:mParser.RetStatementContext):
+    # Exit a parse tree produced by mParser#opera.
+    def exitOpera(self, ctx:mParser.OperaContext):
         pass
 
 
@@ -170,12 +161,39 @@ class mListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by mParser#callParam.
+    def enterCallParam(self, ctx:mParser.CallParamContext):
+        pass
+
+    # Exit a parse tree produced by mParser#callParam.
+    def exitCallParam(self, ctx:mParser.CallParamContext):
+        pass
+
+
+    # Enter a parse tree produced by mParser#callParamList.
+    def enterCallParamList(self, ctx:mParser.CallParamListContext):
+        pass
+
+    # Exit a parse tree produced by mParser#callParamList.
+    def exitCallParamList(self, ctx:mParser.CallParamListContext):
+        pass
+
+
     # Enter a parse tree produced by mParser#functionDefinition.
     def enterFunctionDefinition(self, ctx:mParser.FunctionDefinitionContext):
         pass
 
     # Exit a parse tree produced by mParser#functionDefinition.
     def exitFunctionDefinition(self, ctx:mParser.FunctionDefinitionContext):
+        pass
+
+
+    # Enter a parse tree produced by mParser#functionCall.
+    def enterFunctionCall(self, ctx:mParser.FunctionCallContext):
+        pass
+
+    # Exit a parse tree produced by mParser#functionCall.
+    def exitFunctionCall(self, ctx:mParser.FunctionCallContext):
         pass
 
 

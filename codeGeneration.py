@@ -30,7 +30,10 @@ def arithmatic(op, in1, in2):
     elif op <= 2:
         return "scoreboard players " + ("add" if op == 1 else "remove") + " "+in1+" system "+str(in2)
     else:
-        return ("scoreboard players operation EAX system *= TMP system")
+        return "scoreboard players operation "+in1+" system "+code[op]+" "+ str(in2) +" system"
+
+def call(in1):
+    return "function " + "exxabite" + ":" + in1
 
 def generateFunctions(input, namespace, scoreboard, varList, functionName):
 
@@ -38,8 +41,9 @@ def generateFunctions(input, namespace, scoreboard, varList, functionName):
 
     #Convert var names to the function namespace
     for op in input:
-        if varList[op[1][0]] == 0: op[1][0] = functionName + "_" + op[1][0]
-        if len(op[1]) > 1 and type(op[1][1]) != int and varList[op[1][1]] == 0: op[1][1] = functionName + "_" + op[1][1]
+        if op[0] < 7:
+            if varList[op[1][0]] == 0: op[1][0] = functionName + "_" + op[1][0]
+            if len(op[1]) > 1 and type(op[1][1]) != int and varList[op[1][1]] == 0: op[1][1] = functionName + "_" + op[1][1]
 
     for op in input:
 
@@ -47,6 +51,7 @@ def generateFunctions(input, namespace, scoreboard, varList, functionName):
         if 1 <= op[0] <= 4: out = arithmatic(op[0], op[1][0], op[1][1])
         if op[0] == 5: out = push(op[1][0])
         if op[0] == 6: out = pop(op[1][0])
+        if op[0] == 7: out = call(op[1][0])
 
         output += out + "\n"
     return output

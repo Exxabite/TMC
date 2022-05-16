@@ -24,6 +24,11 @@ class mVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by mParser#AssignFunction.
+    def visitAssignFunction(self, ctx:mParser.AssignFunctionContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by mParser#functions.
     def visitFunctions(self, ctx:mParser.FunctionsContext):
         return self.visitChildren(ctx)
@@ -34,18 +39,8 @@ class mVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by mParser#SegAssign.
-    def visitSegAssign(self, ctx:mParser.SegAssignContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by mParser#SegDefine.
-    def visitSegDefine(self, ctx:mParser.SegDefineContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by mParser#retStatement.
-    def visitRetStatement(self, ctx:mParser.RetStatementContext):
+    # Visit a parse tree produced by mParser#opera.
+    def visitOpera(self, ctx:mParser.OperaContext):
         return self.visitChildren(ctx)
 
 
@@ -99,8 +94,23 @@ class mVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by mParser#callParam.
+    def visitCallParam(self, ctx:mParser.CallParamContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by mParser#callParamList.
+    def visitCallParamList(self, ctx:mParser.CallParamListContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by mParser#functionDefinition.
     def visitFunctionDefinition(self, ctx:mParser.FunctionDefinitionContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by mParser#functionCall.
+    def visitFunctionCall(self, ctx:mParser.FunctionCallContext):
         return self.visitChildren(ctx)
 
 
