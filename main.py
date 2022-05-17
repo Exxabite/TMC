@@ -101,7 +101,7 @@ class mListener(ParseTreeListener):
         if type(value) != list:
             #out.write("mov " + name + ", " + value + "\n")
             #newOp("mov", [str(name), int(value)])
-            append(instr.mov(name, int(value)))
+            append(instr.mov(name, value))
         else:
             #out.write(value + "mov " + name + ", eax\n")
             #newOp("mov", [str(name), "eax"])
@@ -157,7 +157,7 @@ class mListener(ParseTreeListener):
         value = visitor.visit(ctx.value)
 
         if type(value) != list:
-            append(instr.mov("eax", int(value)))
+            append(instr.mov("eax", value))
         else:
             append(value)
         pass
@@ -198,6 +198,7 @@ class mListener(ParseTreeListener):
         for param in reversed(parameterStack):
             append(instr.push(param))
         append(instr.call(name))
+        parameterStack = []
         pass
 
 class MyVisitor(mVisitor):
