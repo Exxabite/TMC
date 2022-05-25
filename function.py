@@ -1,11 +1,17 @@
 class Function:
-    def __init__(self, name):
-        self.name = name
-    code = []
+    #code = []
     __path = []
-    variables = {}
+    #variables = {}
+    #parameters = []
 
-    def appendCode(self, instr, place=code, depth=0):
+    def __init__(self, name, code=[], variables={}, parameters=[]):
+        self.name = name
+        self.code = code
+        self.variables = variables
+        self.parameters = parameters
+
+    def appendCode(self, instr, depth=0):
+        place = self.code
         varList=[]
         self.__appendCode(instr, place, depth, varList)
 
@@ -13,7 +19,12 @@ class Function:
         
         #Decent has reached the correct depth - Append instruction
         if len(self.__path) == depth:
-            place.append(Instruction(instr.opcode, self.getVarPath(instr.modify, varList), self.getVarPath(instr.read, varList)))
+            self.__varList = varList
+            if type(instr) == list:
+                for item in instr:
+                    place.append(Instruction(item.opcode, self.getVarPath(item.modify, varList), self.getVarPath(item.read, varList))) #Implement recurion for infinate depth
+            else:
+                place.append(Instruction(instr.opcode, self.getVarPath(instr.modify, varList), self.getVarPath(instr.read, varList)))
         else:
             #Place is main code and tail is Codeblock - Enter block
             if len(self.code) > 0 and type(place) != Codeblock and type(place[-1]) == Codeblock:
@@ -26,7 +37,8 @@ class Function:
                 self.__appendCode(instr, place.code[-1], depth+1, varList)
 
 
-    def enterBlock(self, name, place=code):
+    def enterBlock(self, name):
+        place = self.code
         self.__enterBlock(name, place, 0)
         self.__path.append(name)
 
@@ -44,7 +56,8 @@ class Function:
             self.__enterBlock(name, place.code[-1], depth+1)
 
 
-    def exitBlock(self, place=code):
+    def exitBlock(self):
+        place = self.code
         self.__path.pop()
         self.__exitBlock(place)
 
@@ -79,7 +92,8 @@ class Function:
                 return var
 
     
-    def newVariable(self, name, VarType, place=code, depth=0):
+    def newVariable(self, name, VarType, depth=0):
+        place=self.code
         if len(self.__path) == 0:
             self.variables[name] = VarType 
         else:
@@ -92,6 +106,19 @@ class Function:
                     self.newVariable(name, VarType, place.code[-1], depth+1)
             else:
                 self.newVariable(name, VarType, place[-1], depth+1)
+
+    def getVarType(self, var):
+        if type(var) == int:
+            return -1
+        if len(self.__path) == 0:
+            if var in self.variables: 
+                return self.variables[var]
+            else:
+                return -1
+        else:
+            for index in reversed(range(0, len(self.__varList))):
+                if var in self.__varList[index]:
+                    return self.__varList[var]
 
 class Instruction:
     def __init__(self, opcode, modify, read):
@@ -112,26 +139,27 @@ class Codeblock:
         self.variableList[name] = VarType
 
 #Example of gneration code
-test = Function("test")
 
-test.appendCode(Instruction(0, "eax", 17))
-test.newVariable("lol", 0)
-test.newVariable("lel", 0)
-test.appendCode(Instruction(0, "lol", "eax"))
-test.enterBlock("someBlock")
-test.appendCode(Instruction(0, "lol", 17))
-test.appendCode(Instruction(1, "lol", 9))
-test.enterBlock("brick")
-test.appendCode(Instruction(0, "brick", 12))
-test.newVariable("beans", 0)
-test.enterBlock("another")
-test.appendCode(Instruction(0, "beans", 42))
-test.exitBlock()
-test.appendCode(Instruction(1, "lol", 6))
-test.exitBlock()
-test.appendCode(Instruction(0, "lel", 7))
-test.exitBlock()
-test.appendCode(Instruction(1, "eax", 18))
+#test = Function("test")
+#
+#test.appendCode(Instruction(0, "eax", 17))
+#test.newVariable("lol", 0)
+#test.newVariable("lel", 0)
+#test.appendCode(Instruction(0, "lol", "eax"))
+#test.enterBlock("someBlock")
+#test.appendCode(Instruction(0, "lol", 17))
+#test.appendCode(Instruction(1, "lol", 9))
+#test.enterBlock("brick")
+#test.appendCode(Instruction(0, "brick", 12))
+#test.newVariable("beans", 0)
+#test.enterBlock("another")
+#test.appendCode(Instruction(0, "beans", 42))
+#test.exitBlock()
+#test.appendCode(Instruction(1, "lol", 6))
+#test.exitBlock()
+#test.appendCode(Instruction(0, "lel", 7))
+#test.exitBlock()
+#test.appendCode(Instruction(1, "eax", 18))
 
 
 def printCode(list, indent=0):
@@ -148,4 +176,4 @@ def printFunction(fun, indent=0):
     print("Code:")
     printCode(fun.code, 4)
 
-printFunction(test)
+#printFunction(test)

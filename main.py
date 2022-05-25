@@ -11,8 +11,7 @@ from antlr4 import *
 from dist.mLexer import mLexer
 from dist.mParser import mParser
 from dist.mVisitor import mVisitor
-
-
+from function import *
 
 types = {
     "int" : 0
@@ -20,38 +19,10 @@ types = {
 
 functions = {}
 
-class Function:
-    name = ""
-    parameters = []
-    code = []
-    variables = {
-        "eax" : 100,
-        "ebx" : 100,
-        "ecx" : 100,
-        "edx" : 100
-    }
+intermediateVarIndex = 0
 
-    def addParameter(self, param):
-        self.parameters.append(param) 
+currentFunction = Function("main")
 
-    def addInstruction(self, instr):
-        self.code.append(instr)
-
-    def addVariable(self, name, type):
-        self.variables[name] = type
-
-    def reset(self):
-        self.name = ""
-        self.parameters = []
-        self.code = []
-        self.variables = {
-            "eax" : 100,
-            "ebx" : 100,
-            "ecx" : 100,
-            "edx" : 100
-        }
-    
-currentFunction = Function()
 
 operation = {
     "mov" : 0,
@@ -63,9 +34,18 @@ operation = {
     "pop" : 6
 }
 
+mov = 0
+add = 1
+sub = 2
+mul = 3
+div = 4
+push = 5
+pop = 6
+call = 7
+
 output = []
 
-mainCode = {}
+mainCode = []
 
 class instr:
     def mov(operand1, operand2):
@@ -101,14 +81,17 @@ class mListener(ParseTreeListener):
 
         datatype = visitor.visit(ctx.type)
         name = str(ctx.getChild(1))
-        value = visitor.visit(ctx.value)
+        value = int(visitor.visit(ctx.value))
         
-        currentFunction.addVariable(name, datatype)
+        #currentFunction.addVariable(name, datatype) <!>
+        currentFunction.newVariable(name, datatype)
 
         if type(value) == int:
-            currentFunction.addInstruction(instr.mov(str(name), int(value)))
+            #currentFunction.addInstruction(instr.mov(str(name), int(value))) <!>
+            currentFunction.appendCode(Instruction(mov, name, value))
         else:
-            currentFunction.addInstruction(instr.mov(str(name), "eax"))
+            #currentFunction.addInstruction(instr.mov(str(name), "eax")) <!>
+            currentFunction.appendCode(Instruction(mov, name, "eax"))
 
     def enterAssignVar(self, ctx:mParser.AssignExprContext):
         visitor = MyVisitor()
@@ -117,42 +100,49 @@ class mListener(ParseTreeListener):
         value = visitor.visit(ctx.value)
 
 
-        if name not in currentFunction.variables.keys():
+        #if name not in currentFunction.variables.keys(): <!>
+        #    raise Exception(name + " is undefined")
+        if currentFunction.getVarType(name) == -1:
             raise Exception(name + " is undefined")
 
-
         if type(value) != list:
-            currentFunction.addInstruction(instr.mov(name, value))
+            #currentFunction.addInstruction(instr.mov(name, value)) <!>
+            currentFunction.appendCode(Instruction(mov, name, value))
         else:
-            currentFunction.addInstruction(value)
-            currentFunction.addInstruction(instr.mov(name, "eax"))
+            #currentFunction.addInstruction(value) <!>
+            currentFunction.appendCode(value)
+            #currentFunction.addInstruction(instr.mov(name, "eax")) <!>
+            currentFunction.appendCode(Instruction(mov, name, "eax"))
 
     def exitAssignFunction(self, ctx:mParser.AssignFunctionContext):
         name = str(ctx.getChild(0))
 
-        currentFunction.addInstruction(instr.mov(name, 'eax'))
-
-        pass
+        #currentFunction.addInstruction(instr.mov(name, 'eax')) <!>
+        currentFunction.appendCode(Instruction(mov, name, "eax"))
 
     def enterDefineVar(self, ctx:mParser.DefineVarContext):
 
         datatype = visitor.visit(ctx.type)
         name = str(ctx.getChild(1))
 
-        currentFunction.addVariable(name, datatype)
+        #currentFunction.addVariable(name, datatype) <!>
+        currentFunction.newVariable(name, datatype)
 
     def enterFunctionDefinition(self, ctx:mParser.FunctionDefinitionContext):
         currentFunction.name = str(ctx.getChild(1))
 
-        pass
 
     def exitFunctionDefinition(self, ctx:mParser.FunctionDefinitionContext):
         global mainCode
 
-        mainCode[currentFunction.name] = {"variables" : currentFunction.variables, "code" : currentFunction.code}
+        
+        mainCode.append(Function(currentFunction.name, currentFunction.variables, currentFunction.parameters))
         functions[currentFunction.name] = currentFunction.parameters
         
-        currentFunction.reset()
+        currentFunction.name = ""
+        currentFunction.parameters = []
+        currentFunction.variables = {}
+        currentFunction.code = []
 
 
     def enterParam(self, ctx:mParser.ParamContext):
@@ -160,20 +150,23 @@ class mListener(ParseTreeListener):
         datatype = visitor.visit(ctx.type)
         name = str(ctx.getChild(1))
 
-        currentFunction.addParameter(type)
+        currentFunction.parameters.append(datatype)
 
-        currentFunction.addInstruction(instr.pop(name))
+        #currentFunction.addInstruction(instr.pop(name)) <!>
+        currentFunction.appendCode(Instruction(pop, name, None))
 
-        currentFunction.addVariable(name, datatype)
+        currentFunction.newVariable(name, datatype)
 
 
     def enterReturnStatement(self, ctx:mParser.ReturnStatementContext):
         value = visitor.visit(ctx.value)
 
-        if type(value) != list:
-            currentFunction.addInstruction(instr.mov("eax", value))
+        if type(value) != list: #Some type handling impovements could be made
+            #currentFunction.addInstruction(instr.mov("eax", value)) <!>
+            currentFunction.appendCode(Instruction(mov, "eax", value))
         else:
-            currentFunction.addInstruction(value)
+            #currentFunction.addInstruction(value) <!>
+            currentFunction.appendCode(value)
         pass
 
 
@@ -203,8 +196,10 @@ class mListener(ParseTreeListener):
         name = str(ctx.getChild(0))
 
         for param in reversed(parameterStack):
-            currentFunction.addInstruction(instr.push(param))
-        currentFunction.addInstruction(instr.call(name))
+            #currentFunction.addInstruction(instr.push(param)) <!>
+            currentFunction.appendCode(Instruction(push, None, param))
+        #currentFunction.addInstruction(instr.call(name)) <!>
+        currentFunction.appendCode(Instruction(call, None, name)) #This is temporary, call instuctions should be formated differently
         parameterStack = []
         pass
 
@@ -242,11 +237,11 @@ class MyVisitor(mVisitor):
         Rtype = str(ctx.getChild(2))[1:-1]
         
 
-        operationFunc =  {
-        '+': instr.add,
-        '-': instr.sub,
-        '*': instr.mul,
-        '/': instr.div,
+        opcode =  {
+        '+': 1,
+        '-': 2,
+        '*': 3,
+        '/': 4,
         }
 
         expression = []
@@ -262,31 +257,39 @@ class MyVisitor(mVisitor):
                 if op == '/': expression = int(l / r)
                 
             else:
-                expression += instr.mov("eax", l)
-                expression += operationFunc[op]("eax", r)
+                #expression += instr.mov("eax", l) <!>
+                expression += [Instruction(mov, "eax", l)]
+                #expression += operationFunc[op]("eax", r) <!>
+                expression += [Instruction(opcode[op], "eax", r)]
         
 
         elif type(l) == list and type(r) != list:
             expression += l
-            expression += operationFunc[op]("eax", r)
+            #expression += operationFunc[op]("eax", r) <!>
+            expression += [Instruction(opcode[op], "eax", r)]
             
         elif type(l) != list and type(r) == list:
             expression += r
-            expression += operationFunc[op]("eax", l)
+            #expression += operationFunc[op]("eax", l) <!>
+            expression += [Instruction(opcode[op], "eax", l)]
 
         elif type(l) == list and type(r) == list:
             expression += l
-            expression += instr.push("eax")
+            #expression += instr.push("eax") <!>
+            expression += [Instruction(mov, "__temp_" + str(intermediateVarIndex), "eax")]
             expression += r
-            expression += instr.pop("ebx")
-            expression += operationFunc[op]("ebx", "eax")
-            expression += instr.mov("eax", "ebx")
+            #expression += instr.pop("ebx")
+            #expression += operationFunc[op]("ebx", "eax") <!>
+            expression += [Instruction(opcode[op], "__temp" + str(intermediateVarIndex), "eax")]
+            #expression += instr.mov("eax", "ebx")
+            expression += [Instruction(mov, "eax", "__temp" + str(intermediateVarIndex))]
         return expression
 
 
 if __name__ == "__main__":
     
-    text = open(sys.argv[1]).read()
+    #text = open(sys.argv[1]).read() !only for debuging!
+    text = open("words.c").read()
     data = InputStream(text)
 
     # lexer
@@ -304,6 +307,8 @@ if __name__ == "__main__":
     
 
     walker.walk(printer, tree)
+
+    printFunction(mainCode[0])
 
     for line in output:
         print(line)
