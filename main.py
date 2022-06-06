@@ -136,7 +136,7 @@ class mListener(ParseTreeListener):
         global mainCode
 
         
-        mainCode.append(Function(currentFunction.name, currentFunction.variables, currentFunction.parameters))
+        mainCode.append(Function(currentFunction.name, currentFunction.code, currentFunction.variables, currentFunction.parameters))
         functions[currentFunction.name] = currentFunction.parameters
         
         currentFunction.name = ""
@@ -153,9 +153,9 @@ class mListener(ParseTreeListener):
         currentFunction.parameters.append(datatype)
 
         #currentFunction.addInstruction(instr.pop(name)) <!>
+        currentFunction.newVariable(name, datatype)
         currentFunction.appendCode(Instruction(pop, name, None))
 
-        currentFunction.newVariable(name, datatype)
 
 
     def enterReturnStatement(self, ctx:mParser.ReturnStatementContext):
@@ -189,6 +189,7 @@ class mListener(ParseTreeListener):
             name = str(ctx.getChild(0))
 
         parameterStack.append(name)
+        #currentFunction.newVariable(name, 0)
         pass
 
     def exitFunctionCall(self, ctx:mParser.FunctionCallContext):
@@ -308,24 +309,20 @@ if __name__ == "__main__":
 
     walker.walk(printer, tree)
 
-    printFunction(mainCode[0])
+    for function in mainCode:
+        printFunction(function)
 
     for line in output:
         print(line)
 
     optimizedOutput = optimize(output)
 
-    with open(sys.argv[1] + ".json", 'w') as fp:
-        json.dump(mainCode, fp)
-
     print(mainCode)
-    print(functions)
 
 
     for func in mainCode:
-        file = open(sys.argv[2] + func + ".mcfunction", "w")
-        file.write(generateFunctions(mainCode[func]["code"], "exxabite:data", "system", mainCode[func]["variables"], func))
-
+        file = open(sys.argv[2] + func.name + ".mcfunction", "w")
+        file.write(generateFunctions(func.code, "exxabite:data", "system", func.variables, func.name))
 
 
     print("\nOptimized:\n" )

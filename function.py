@@ -142,8 +142,8 @@ class Codeblock:
 
 #test = Function("test")
 #
-#test.appendCode(Instruction(0, "eax", 17))
 #test.newVariable("lol", 0)
+#test.appendCode(Instruction(6, "lol", None))
 #test.newVariable("lel", 0)
 #test.appendCode(Instruction(0, "lol", "eax"))
 #test.enterBlock("someBlock")
@@ -162,18 +162,31 @@ class Codeblock:
 #test.appendCode(Instruction(1, "eax", 18))
 
 
+operation = {
+    0 : "mov",
+    1 : "add",
+    2 : "sub",
+    3 : "mul",
+    4 : "div",
+    5 : "push",
+    6 : "pop",
+    7 : "call",
+}
+
 def printCode(list, indent=0):
     for instr in list:
         if type(instr) == Instruction:
-            print(" "*indent + str(instr.opcode) + " " + str(instr.modify) + ", " + str(instr.read))
+            print(" "*indent + operation[instr.opcode] + " " + str(instr.modify) + ", " + str(instr.read))
         elif type(instr) == Codeblock:
             print(" "*indent + instr.name + ": " + ', '.join(map(str, instr.variableList)))
             printCode(instr.code, indent + 4)
+        else:
+            print(instr)
 
 def printFunction(fun, indent=0):
     print("Name: " + fun.name)
     print("Variables: " + ', '.join(map(str, fun.variables)))
     print("Code:")
     printCode(fun.code, 4)
-
+    print("\n")
 #printFunction(test)
