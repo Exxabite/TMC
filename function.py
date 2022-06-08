@@ -1,8 +1,5 @@
 class Function:
-    #code = []
     __path = []
-    #variables = {}
-    #parameters = []
 
     def __init__(self, name, code=[], variables={}, parameters=[]):
         self.name = name

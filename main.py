@@ -1,10 +1,4 @@
-#from curses.ascii import isdigit
-from ast import Assign
-from multiprocessing.dummy.connection import Listener
-from operator import contains
-import string
 import sys
-import json
 from codeGeneration import arithmatic, generateFunctions
 from optimization import optimize
 from antlr4 import *
@@ -83,14 +77,11 @@ class mListener(ParseTreeListener):
         name = str(ctx.getChild(1))
         value = int(visitor.visit(ctx.value))
         
-        #currentFunction.addVariable(name, datatype) <!>
         currentFunction.newVariable(name, datatype)
 
         if type(value) == int:
-            #currentFunction.addInstruction(instr.mov(str(name), int(value))) <!>
             currentFunction.appendCode(Instruction(mov, name, value))
         else:
-            #currentFunction.addInstruction(instr.mov(str(name), "eax")) <!>
             currentFunction.appendCode(Instruction(mov, name, "eax"))
 
     def enterAssignVar(self, ctx:mParser.AssignExprContext):
@@ -100,24 +91,18 @@ class mListener(ParseTreeListener):
         value = visitor.visit(ctx.value)
 
 
-        #if name not in currentFunction.variables.keys(): <!>
-        #    raise Exception(name + " is undefined")
         if currentFunction.getVarType(name) == -1:
             raise Exception(name + " is undefined")
 
         if type(value) != list:
-            #currentFunction.addInstruction(instr.mov(name, value)) <!>
             currentFunction.appendCode(Instruction(mov, name, value))
         else:
-            #currentFunction.addInstruction(value) <!>
             currentFunction.appendCode(value)
-            #currentFunction.addInstruction(instr.mov(name, "eax")) <!>
             currentFunction.appendCode(Instruction(mov, name, "eax"))
 
     def exitAssignFunction(self, ctx:mParser.AssignFunctionContext):
         name = str(ctx.getChild(0))
 
-        #currentFunction.addInstruction(instr.mov(name, 'eax')) <!>
         currentFunction.appendCode(Instruction(mov, name, "eax"))
 
     def enterDefineVar(self, ctx:mParser.DefineVarContext):
@@ -125,7 +110,6 @@ class mListener(ParseTreeListener):
         datatype = visitor.visit(ctx.type)
         name = str(ctx.getChild(1))
 
-        #currentFunction.addVariable(name, datatype) <!>
         currentFunction.newVariable(name, datatype)
 
     def enterFunctionDefinition(self, ctx:mParser.FunctionDefinitionContext):
@@ -152,7 +136,6 @@ class mListener(ParseTreeListener):
 
         currentFunction.parameters.append(datatype)
 
-        #currentFunction.addInstruction(instr.pop(name)) <!>
         currentFunction.newVariable(name, datatype)
         currentFunction.appendCode(Instruction(pop, name, None))
 
@@ -162,10 +145,8 @@ class mListener(ParseTreeListener):
         value = visitor.visit(ctx.value)
 
         if type(value) != list: #Some type handling impovements could be made
-            #currentFunction.addInstruction(instr.mov("eax", value)) <!>
             currentFunction.appendCode(Instruction(mov, "eax", value))
         else:
-            #currentFunction.addInstruction(value) <!>
             currentFunction.appendCode(value)
         pass
 
@@ -197,9 +178,7 @@ class mListener(ParseTreeListener):
         name = str(ctx.getChild(0))
 
         for param in reversed(parameterStack):
-            #currentFunction.addInstruction(instr.push(param)) <!>
             currentFunction.appendCode(Instruction(push, None, param))
-        #currentFunction.addInstruction(instr.call(name)) <!>
         currentFunction.appendCode(Instruction(call, None, name)) #This is temporary, call instuctions should be formated differently
         parameterStack = []
         pass
@@ -264,20 +243,16 @@ class MyVisitor(mVisitor):
                 if op == '/': expression = int(l / r)
                 
             else:
-                #expression += instr.mov("eax", l) <!>
                 expression += [Instruction(mov, "eax", l)]
-                #expression += operationFunc[op]("eax", r) <!>
                 expression += [Instruction(opcode[op], "eax", r)]
         
 
         elif type(l) == list and type(r) != list:
             expression += l
-            #expression += operationFunc[op]("eax", r) <!>
             expression += [Instruction(opcode[op], "eax", r)]
             
         elif type(l) != list and type(r) == list:
             expression += r
-            #expression += operationFunc[op]("eax", l) <!>
             expression += [Instruction(opcode[op], "eax", l)]
 
         elif type(l) == list and type(r) == list:
