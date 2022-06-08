@@ -204,8 +204,10 @@ class mListener(ParseTreeListener):
         parameterStack = []
         pass
 
-class MyVisitor(mVisitor):
+exprDepth = 0
 
+class MyVisitor(mVisitor):
+    
     def visitNumberExpr(self, ctx):
         value = ctx.getText()
         return int(value)
@@ -227,9 +229,13 @@ class MyVisitor(mVisitor):
         return types[type]
 
     def visitInfixExpr(self, ctx):
+        global exprDepth
+
+        exprDepth += 1
         l = self.visit(ctx.left)
         r = self.visit(ctx.right)
-        
+        exprDepth -= 1
+
         op = ctx.op.text
 
 
@@ -276,14 +282,10 @@ class MyVisitor(mVisitor):
 
         elif type(l) == list and type(r) == list:
             expression += l
-            #expression += instr.push("eax") <!>
-            expression += [Instruction(mov, "__temp_" + str(intermediateVarIndex), "eax")]
+            expression += [Instruction(mov, "__tmp"+str(exprDepth), "eax")]
             expression += r
-            #expression += instr.pop("ebx")
-            #expression += operationFunc[op]("ebx", "eax") <!>
-            expression += [Instruction(opcode[op], "__temp" + str(intermediateVarIndex), "eax")]
-            #expression += instr.mov("eax", "ebx")
-            expression += [Instruction(mov, "eax", "__temp" + str(intermediateVarIndex))]
+            expression += [Instruction(opcode[op], "__tmp"+str(exprDepth), "eax")]
+            expression += [Instruction(mov, "eax", "__tmp"+str(exprDepth))]
         return expression
 
 

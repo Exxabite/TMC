@@ -41,26 +41,30 @@ def arithmatic(op, in1, in2):
 def call(in1):
     return "function " + "exxabite" + ":" + in1
 
-def generateFunctions(input, namespace, scoreboard, varList, functionName):
+def generateFunctions(code, namespace, scoreboard, varList, functionName):
+
+    #input is function code
+
 
     output = ""
 
     #Convert var names to the function namespace
-    for op in input:
-        if op[0] < 7:
-            if type(op[1][0]) != int and varList[op[1][0]] == 0:
-                op[1][0] = functionName + "_" + op[1][0]
+    #for op in code:
+    #    print(op)
+    #    if op.opcode < 7:
+    #        if type(op.modify) != int and varList[op.modify] == 0:
+    #            op.modify = functionName + "_" + op.modify
+    #
+    #        if len(op[1]) > 1 and type(op.read) != int and varList[op.read] == 0:
+    #            op.read = functionName + "_" + op.read
 
-            if len(op[1]) > 1 and type(op[1][1]) != int and varList[op[1][1]] == 0:
-                op[1][1] = functionName + "_" + op[1][1]
+    for op in code:
 
-    for op in input:
-
-        if op[0] == 0: out = mov(op[1][0], op[1][1])
-        if 1 <= op[0] <= 4: out = arithmatic(op[0], op[1][0], op[1][1])
-        if op[0] == 5: out = push(op[1][0])
-        if op[0] == 6: out = pop(op[1][0])
-        if op[0] == 7: out = call(op[1][0])
+        if op.opcode == 0: out = mov(op.modify, op.read)
+        if 1 <= op.opcode <= 4: out = arithmatic(op.opcode, op.modify, op.read)
+        if op.opcode == 5: out = push(op.read)
+        if op.opcode == 6: out = pop(op.modify)
+        if op.opcode == 7: out = call(op.read)
 
         output += out + "\n"
     return output

@@ -176,7 +176,18 @@ operation = {
 def printCode(list, indent=0):
     for instr in list:
         if type(instr) == Instruction:
-            print(" "*indent + operation[instr.opcode] + " " + str(instr.modify) + ", " + str(instr.read))
+            if type(instr.modify) == type(None) and type(instr.read) != type(None):
+                print(" "*indent + operation[instr.opcode] + " " + str(instr.read))
+
+            elif type(instr.modify) != type(None) and type(instr.read) == type(None):
+                print(" "*indent + operation[instr.opcode] + " " + str(instr.modify))
+
+            elif type(instr.modify) != type(None) and type(instr.read) != type(None):
+                print(" "*indent + operation[instr.opcode] + " " + str(instr.modify) + ", " + str(instr.read))
+            
+            else:
+                print(" "*indent + operation[instr.opcode] + " " + str(instr.codeReference))
+
         elif type(instr) == Codeblock:
             print(" "*indent + instr.name + ": " + ', '.join(map(str, instr.variableList)))
             printCode(instr.code, indent + 4)
