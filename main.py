@@ -119,9 +119,16 @@ class mListener(ParseTreeListener):
     def exitFunctionDefinition(self, ctx:mParser.FunctionDefinitionContext):
         global mainCode
 
-        
+        if currentFunction.name in functions:
+            if currentFunction.parameters in functions[currentFunction.name]:
+                raise Exception("Cannot have two functions with identical name and parameters")
+            else:
+                functions[currentFunction.name] += [currentFunction.parameters]
+        else:
+            functions[currentFunction.name] = [currentFunction.parameters]
+
+        currentFunction.name = currentFunction.name + ''.join(map(str, currentFunction.parameters))
         mainCode.append(Function(currentFunction.name, currentFunction.code, currentFunction.variables, currentFunction.parameters))
-        functions[currentFunction.name] = currentFunction.parameters
         
         currentFunction.name = ""
         currentFunction.parameters = []
@@ -162,8 +169,6 @@ class mListener(ParseTreeListener):
     def enterCallParam(self, ctx:mParser.CallParamListContext):
         global parameterStack
 
-        print(ctx.getChild(0))
-
         try:
             name = int(str(ctx.getChild(0)))
         except:
@@ -177,9 +182,19 @@ class mListener(ParseTreeListener):
         global parameterStack
         name = str(ctx.getChild(0))
 
+        #Change the name to accomodate function overloading
+        paramHash = []
+        for parameter in parameterStack:
+            if type(parameter) == int: paramHash.append(0)
+            else: paramHash.append(currentFunction.getVarType(parameter))
+
+        if paramHash not in functions[name]:
+            raise Exception ("Invalid parameter types/amount in functon call: " + name)
+
         for param in reversed(parameterStack):
             currentFunction.appendCode(Instruction(push, None, param))
-        currentFunction.appendCode(Instruction(call, None, name)) #This is temporary, call instuctions should be formated differently
+
+        currentFunction.appendCode(Instruction(call, None, name + ''.join(map(str, paramHash)))) #This is temporary, call instuctions should be formated differently
         parameterStack = []
         pass
 
