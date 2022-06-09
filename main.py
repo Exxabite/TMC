@@ -189,9 +189,9 @@ class MyVisitor(mVisitor):
 
     def visitTypeSpecifier(self, ctx: mParser.TypeSpecifierContext):
         
-        type = str(ctx.getChild(0))
+        variable_type = str(ctx.getChild(0))
 
-        return types[type]
+        return types[variable_type]
 
     def visitInfixExpr(self, ctx):
         global exprDepth
@@ -204,7 +204,7 @@ class MyVisitor(mVisitor):
         op = ctx.op.text
         
 
-        opcode =  {
+        opcode = {
         '+': 1,
         '-': 2,
         '*': 3,
