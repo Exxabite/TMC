@@ -282,7 +282,7 @@ if __name__ == "__main__":
     for func in mainCode:
         file = open(sys.argv[2] + func.name + ".mcfunction", "w", encoding="utf-8")
         file.write(
-            generateFunctions(func.code,"exxabite:data", "system", func.variables, func.name)
+            generateFunctions(func.code,"exxabite:data", "system")
         )
 
 
