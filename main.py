@@ -119,15 +119,6 @@ class mListener(ParseTreeListener):
     def exitFunctionDefinition(self, ctx:mParser.FunctionDefinitionContext):
         global mainCode
 
-        if currentFunction.name in functions:
-            if currentFunction.parameters in functions[currentFunction.name]:
-                raise Exception("Cannot have two functions with identical name and parameters")
-            else:
-                functions[currentFunction.name] += [currentFunction.parameters]
-        else:
-            functions[currentFunction.name] = [currentFunction.parameters]
-
-        currentFunction.name = currentFunction.name + ''.join(map(str, currentFunction.parameters))
         mainCode.append(Function(currentFunction.name, currentFunction.code, currentFunction.variables, currentFunction.parameters))
         
         currentFunction.name = ""
@@ -146,7 +137,17 @@ class mListener(ParseTreeListener):
         currentFunction.newVariable(name, datatype)
         currentFunction.appendCode(Instruction(pop, name, None))
 
+    def exitParamList(self, ctx:mParser.ParamListContext):
+        
+        if currentFunction.name in functions:
+            if currentFunction.parameters in functions[currentFunction.name]:
+                raise Exception("Cannot have two functions with identical name and parameters")
+            else:
+                functions[currentFunction.name] += [currentFunction.parameters]
+        else:
+            functions[currentFunction.name] = [currentFunction.parameters]
 
+        currentFunction.name = currentFunction.name + ''.join(map(str, currentFunction.parameters))
 
     def enterReturnStatement(self, ctx:mParser.ReturnStatementContext):
         value = visitor.visit(ctx.value)
