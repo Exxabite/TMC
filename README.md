@@ -1,7 +1,7 @@
 # TMC
 The M Compiler, a compiler for the M language. 
 
-[![GitHub Super-Linter](https://github.com/Exxabite/TMC/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
+[![CodeFactor](https://www.codefactor.io/repository/github/exxabite/tmc/badge)](https://www.codefactor.io/repository/github/exxabite/tmc)
 
 Temporary documentation.
 
