@@ -1,5 +1,5 @@
 import sys
-from codeGeneration import arithmatic, generateFunctions
+from codeGeneration import generateFunctions
 from optimization import optimize
 from antlr4 import *
 from dist.mLexer import mLexer
@@ -12,8 +12,6 @@ types = {
 }
 
 functions = {}
-
-intermediateVarIndex = 0
 
 currentFunction = Function("main")
 
@@ -37,35 +35,9 @@ push = 5
 pop = 6
 call = 7
 
-output = []
+OUTPUT = []
 
 mainCode = []
-
-class instr:
-    def mov(operand1, operand2):
-        return [0, [operand1, operand2]]
-    def add(operand1, operand2):
-        return [1, [operand1, operand2]]
-    def sub(operand1, operand2):
-        return [2, [operand1, operand2]]
-    def mul(operand1, operand2):
-        return [3, [operand1, operand2]]
-    def div(operand1, operand2):
-        return [4, [operand1, operand2]]
-    def push(operand1):
-        return [5, [operand1]]
-    def pop(operand1):
-        return [6, [operand1]]
-    def call(operand1):
-        return [7, [operand1]]
-
-def append(input):
-    global output
-    output += input
-
-def newOp(op, operands):
-    global output
-    output += [[operation[op], operands]]
 
 parameterStack = []
 
@@ -117,10 +89,13 @@ class mListener(ParseTreeListener):
 
 
     def exitFunctionDefinition(self, ctx:mParser.FunctionDefinitionContext):
-        global mainCode
 
-        mainCode.append(Function(currentFunction.name, currentFunction.code, currentFunction.variables, currentFunction.parameters))
-        
+        mainCode.append(
+            Function(currentFunction.name, currentFunction.code,
+                    currentFunction.variables, currentFunction.parameters
+            )
+        )
+
         currentFunction.name = ""
         currentFunction.parameters = []
         currentFunction.variables = {}
@@ -156,7 +131,6 @@ class mListener(ParseTreeListener):
             currentFunction.appendCode(Instruction(mov, "eax", value))
         else:
             currentFunction.appendCode(value)
-        pass
 
 
     def enterFunctionCall(self, ctx:mParser.FunctionCallContext):
@@ -168,16 +142,13 @@ class mListener(ParseTreeListener):
 
 
     def enterCallParam(self, ctx:mParser.CallParamListContext):
-        global parameterStack
 
         try:
             name = int(str(ctx.getChild(0)))
-        except:
+        except ValueError:
             name = str(ctx.getChild(0))
 
         parameterStack.append(name)
-        #currentFunction.newVariable(name, 0)
-        pass
 
     def exitFunctionCall(self, ctx:mParser.FunctionCallContext):
         global parameterStack
@@ -197,12 +168,11 @@ class mListener(ParseTreeListener):
 
         currentFunction.appendCode(Instruction(call, None, name + ''.join(map(str, paramHash)))) #This is temporary, call instuctions should be formated differently
         parameterStack = []
-        pass
 
 exprDepth = 0
 
 class MyVisitor(mVisitor):
-    
+
     def visitNumberExpr(self, ctx):
         value = ctx.getText()
         return int(value)
@@ -219,9 +189,9 @@ class MyVisitor(mVisitor):
 
     def visitTypeSpecifier(self, ctx: mParser.TypeSpecifierContext):
         
-        type = str(ctx.getChild(0))
+        variable_type = str(ctx.getChild(0))
 
-        return types[type]
+        return types[variable_type]
 
     def visitInfixExpr(self, ctx):
         global exprDepth
@@ -232,14 +202,9 @@ class MyVisitor(mVisitor):
         exprDepth -= 1
 
         op = ctx.op.text
-
-
-
-        Ltype = str(ctx.getChild(0))[1:-1]
-        Rtype = str(ctx.getChild(2))[1:-1]
         
 
-        opcode =  {
+        opcode = {
         '+': 1,
         '-': 2,
         '*': 3,
@@ -283,7 +248,7 @@ class MyVisitor(mVisitor):
 if __name__ == "__main__":
     
     #text = open(sys.argv[1]).read() !only for debuging!
-    text = open("words.c").read()
+    text = open("words.c", encoding="utf-8").read()
     data = InputStream(text)
 
     # lexer
@@ -298,24 +263,27 @@ if __name__ == "__main__":
 
     printer = mListener()
     walker = ParseTreeWalker()
-    
+
 
     walker.walk(printer, tree)
+
 
     for function in mainCode:
         printFunction(function)
 
-    for line in output:
+    for line in OUTPUT:
         print(line)
 
-    optimizedOutput = optimize(output)
+    optimizedOutput = optimize(OUTPUT)
 
     print(mainCode)
 
 
     for func in mainCode:
-        file = open(sys.argv[2] + func.name + ".mcfunction", "w")
-        file.write(generateFunctions(func.code, "exxabite:data", "system", func.variables, func.name))
+        file = open(sys.argv[2] + func.name + ".mcfunction", "w", encoding="utf-8")
+        file.write(
+            generateFunctions(func.code,"exxabite:data", "system")
+        )
 
 
     print("\nOptimized:\n" )

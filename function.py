@@ -1,37 +1,47 @@
 class Function:
     __path = []
-
-    def __init__(self, name, code=[], variables={}, parameters=[]):
+    __varList = []
+    def __init__(self, name, code=None, variables=None, parameters=None):
         self.name = name
-        self.code = code
-        self.variables = variables
-        self.parameters = parameters
+        if code is None:
+            self.code = []
+        else:
+            self.code = code
+
+        if variables is None:
+            self.variables = {}
+        else:
+            self.variables = variables
+
+        if parameters is None:
+            self.parameters = []
+        else:
+            self.parameters = parameters
 
     def appendCode(self, instr, depth=0):
         place = self.code
-        varList=[]
-        self.__appendCode(instr, place, depth, varList)
+        self.__appendCode(instr, place, depth, [])
 
-    def __appendCode(self, instr, place, depth, varList):
+    def __appendCode(self, instr, place, depth, var_list):
         
         #Decent has reached the correct depth - Append instruction
         if len(self.__path) == depth:
-            self.__varList = varList
+            self.__varList = var_list
             if type(instr) == list:
                 for item in instr:
-                    place.append(Instruction(item.opcode, self.getVarPath(item.modify, varList), self.getVarPath(item.read, varList))) #Implement recurion for infinate depth
+                    place.append(Instruction(item.opcode, self.getVarPath(item.modify, var_list), self.getVarPath(item.read, var_list))) #Implement recurion for infinate depth
             else:
-                place.append(Instruction(instr.opcode, self.getVarPath(instr.modify, varList), self.getVarPath(instr.read, varList)))
+                place.append(Instruction(instr.opcode, self.getVarPath(instr.modify, var_list), self.getVarPath(instr.read, var_list)))
         else:
             #Place is main code and tail is Codeblock - Enter block
             if len(self.code) > 0 and type(place) != Codeblock and type(place[-1]) == Codeblock:
-                varList.append(place[-1].variableList)
-                self.__appendCode(instr, place[-1], depth+1, varList)
+                var_list.append(place[-1].variableList)
+                self.__appendCode(instr, place[-1], depth+1, var_list)
 
             #Place is Codeblock and tail is Codeblock - Enter block
             elif type(place) == Codeblock and len(place.code) > 0 and type(place.code[-1]) == Codeblock:
-                varList.append(place.code[-1].variableList)
-                self.__appendCode(instr, place.code[-1], depth+1, varList)
+                var_list.append(place.code[-1].variableList)
+                self.__appendCode(instr, place.code[-1], depth+1, var_list)
 
 
     def enterBlock(self, name):
@@ -88,9 +98,11 @@ class Function:
             else:
                 return var
 
-    
     def newVariable(self, name, VarType, depth=0):
-        place=self.code
+        self.__newVariable(name, VarType, self.code, depth)
+
+    def __newVariable(self, name, VarType, place, depth=0):
+        #place=self.code
         if len(self.__path) == 0:
             self.variables[name] = VarType 
         else:
@@ -100,9 +112,9 @@ class Function:
                     place.addVariable(name, VarType)
                     return
                 else:
-                    self.newVariable(name, VarType, place.code[-1], depth+1)
+                    self.__newVariable(name, VarType, place.code[-1], depth+1)
             else:
-                self.newVariable(name, VarType, place[-1], depth+1)
+                self.__newVariable(name, VarType, place[-1], depth+1)
 
     def getVarType(self, var):
         if type(var) == int:
@@ -124,10 +136,13 @@ class Instruction:
         self.read = read
 
 class Codeblock:
-    def __init__(self, name, code=[], variableList={}):
+    def __init__(self, name, code=None, variableList=None):
         self.name = name
-        self.code = code
-        self.variableList = {}
+
+        if code is None:
+            self.code = []
+        if variableList is None:
+            self.variableList = {}
 
     def append(self, instr):
         self.code.append(instr)
@@ -170,8 +185,8 @@ operation = {
     7 : "call",
 }
 
-def printCode(list, indent=0):
-    for instr in list:
+def printCode(code_list, indent=0):
+    for instr in code_list:
         if type(instr) == Instruction:
             if type(instr.modify) == type(None) and type(instr.read) != type(None):
                 print(" "*indent + operation[instr.opcode] + " " + str(instr.read))
@@ -191,7 +206,7 @@ def printCode(list, indent=0):
         else:
             print(instr)
 
-def printFunction(fun, indent=0):
+def printFunction(fun): #indent=0 might be used later
     print("Name: " + fun.name)
     print("Variables: " + ', '.join(map(str, fun.variables)))
     print("Code:")
