@@ -7,15 +7,15 @@ def mov(in1, in2):
 
 def push(in1):
     if type(in1) == str: #From variable
-        return ("execute store result storage "+ NAMESPACE +" TMP int 1 run scoreboard players get "+ in1 +" "+ SCOREBOARD +"\n"
-                "data modify storage "+ NAMESPACE +" Stack prepend from storage "+ NAMESPACE +" TMP")
+        return ("execute store result storage "+ NAMESPACE +":data TMP int 1 run scoreboard players get "+ in1 +" "+ SCOREBOARD +"\n"
+                "data modify storage "+ NAMESPACE +":data Stack prepend from storage "+ NAMESPACE +":data TMP")
 
     elif type(in1) == int: #From immediate number 
-        return "data modify storage "+ NAMESPACE +" Stack prepend value " + str(in1)
+        return "data modify storage "+ NAMESPACE +":data Stack prepend value " + str(in1)
 
 def pop(in1): #To variable
-    return ("execute store result score "+ in1 +" system run data get storage "+ NAMESPACE +" Stack[0] 1\n"
-            "data remove storage "+ NAMESPACE +" Stack[0]") 
+    return ("execute store result score "+ in1 +" system run data get storage "+ NAMESPACE +":data Stack[0] 1\n"
+            "data remove storage "+ NAMESPACE +":data Stack[0]") 
 
 def arithmatic(op, in1, in2):
     code = { #0, 5 and 6 need to be there, I don't know why since they never seem to be used
