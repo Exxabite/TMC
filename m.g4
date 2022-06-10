@@ -20,6 +20,7 @@ opera
     | defineVariable                           
     | returnStatement                          
     | functionCall
+    | selectionStatement
     ;
 
 expr: left=expr op=('*'|'/') right=expr        # InfixExpr
@@ -33,6 +34,20 @@ defineVariable: type=typeSpecifier name=WORD             #DefineVar;
 
 typeSpecifier
     : 'int'                                    
+    ;
+
+statement
+    : compoundStatement
+    | selectionStatement
+    ;
+
+condition
+    : expr ('=='| '!=' | '<'|'>'|'<='|'>=') expr
+    ;
+
+selectionStatement
+    :   'if' '(' condition ')' statement ('else' statement)?
+    |   'switch' '(' condition ')' statement
     ;
 
 compoundStatement
@@ -56,7 +71,7 @@ callParamList
     ;
 
 functionDefinition
-    :   typeSpecifier name=WORD '(' paramList? ')' compoundStatement
+    :   typeSpecifier name=WORD '(' paramList? ')' statement
     ;
 
 functionCall
