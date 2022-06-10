@@ -125,6 +125,33 @@ class mListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by mParser#statement.
+    def enterStatement(self, ctx:mParser.StatementContext):
+        pass
+
+    # Exit a parse tree produced by mParser#statement.
+    def exitStatement(self, ctx:mParser.StatementContext):
+        pass
+
+
+    # Enter a parse tree produced by mParser#condition.
+    def enterCondition(self, ctx:mParser.ConditionContext):
+        pass
+
+    # Exit a parse tree produced by mParser#condition.
+    def exitCondition(self, ctx:mParser.ConditionContext):
+        pass
+
+
+    # Enter a parse tree produced by mParser#selectionStatement.
+    def enterSelectionStatement(self, ctx:mParser.SelectionStatementContext):
+        pass
+
+    # Exit a parse tree produced by mParser#selectionStatement.
+    def exitSelectionStatement(self, ctx:mParser.SelectionStatementContext):
+        pass
+
+
     # Enter a parse tree produced by mParser#compoundStatement.
     def enterCompoundStatement(self, ctx:mParser.CompoundStatementContext):
         pass

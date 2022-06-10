@@ -74,6 +74,21 @@ class mVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by mParser#statement.
+    def visitStatement(self, ctx:mParser.StatementContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by mParser#condition.
+    def visitCondition(self, ctx:mParser.ConditionContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by mParser#selectionStatement.
+    def visitSelectionStatement(self, ctx:mParser.SelectionStatementContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by mParser#compoundStatement.
     def visitCompoundStatement(self, ctx:mParser.CompoundStatementContext):
         return self.visitChildren(ctx)
