@@ -29,9 +29,9 @@ class Function:
             self.__varList = var_list
             if type(instr) == list:
                 for item in instr:
-                    place.append(Instruction(item.opcode, self.getVarPath(item.modify, var_list), self.getVarPath(item.read, var_list))) #Implement recurion for infinate depth
+                    place.append(Instruction(item.opcode, self.getVarPath(item.modify, var_list), self.getVarPath(item.read, var_list), item.codeblock)) #Implement recurion for infinate depth
             else:
-                place.append(Instruction(instr.opcode, self.getVarPath(instr.modify, var_list), self.getVarPath(instr.read, var_list)))
+                place.append(Instruction(instr.opcode, self.getVarPath(instr.modify, var_list), self.getVarPath(instr.read, var_list), instr.codeblock))
         else:
             #Place is main code and tail is Codeblock - Enter block
             if len(self.code) > 0 and type(place) != Codeblock and type(place[-1]) == Codeblock:
@@ -77,6 +77,12 @@ class Function:
         elif len(self.code) > 0 and type(place) == Codeblock and type(place.code[-1]) == Codeblock and type(place.code[-1].code[-1]) == Codeblock:
             self.__exitBlock(place.code[-1])
 
+
+    def getPath(self):
+        if len(self.__path) == 0:
+            return self.name + "_"
+        else:
+            return self.name + "_" + '.'.join(map(str, self.__path)) + "."
 
     def getVarPath(self, var, varList):
         if type(var) == int:
@@ -130,10 +136,11 @@ class Function:
                     return self.__varList[var]
 
 class Instruction:
-    def __init__(self, opcode, modify, read):
+    def __init__(self, opcode, modify, read, codeblock=None):
         self.opcode = opcode
         self.modify = modify
         self.read = read
+        self.codeblock = codeblock          
 
 class Codeblock:
     def __init__(self, name, code=None, variableList=None):
@@ -187,12 +194,20 @@ operation = {
     5 : "push",
     6 : "pop",
     7 : "call",
+    8 : "je",
+    9 : "jg",
+    10: "jge",
+    11: "jl",
+    12: "jle",
+    13: "jne"
 }
 
 def printCode(code_list, indent=0):
     for instr in code_list:
         if type(instr) == Instruction:
-            if type(instr.modify) == type(None) and type(instr.read) != type(None):
+            if 8 <= instr.opcode <= 13:
+                print(" "*indent + operation[instr.opcode] + " " + str(instr.modify) + ", " + str(instr.read) + ", " + str(instr.codeblock))
+            elif type(instr.modify) == type(None) and type(instr.read) != type(None):
                 print(" "*indent + operation[instr.opcode] + " " + str(instr.read))
 
             elif type(instr.modify) != type(None) and type(instr.read) == type(None):

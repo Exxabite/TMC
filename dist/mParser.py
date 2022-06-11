@@ -1011,6 +1011,9 @@ class mParser ( Parser ):
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
             self.parser = parser
+            self.left = None # ExprContext
+            self.op = None # Token
+            self.right = None # ExprContext
 
         def expr(self, i:int=None):
             if i is None:
@@ -1047,16 +1050,17 @@ class mParser ( Parser ):
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 99
-            self.expr(0)
+            localctx.left = self.expr(0)
             self.state = 100
+            localctx.op = self._input.LT(1)
             _la = self._input.LA(1)
             if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << mParser.T__9) | (1 << mParser.T__10) | (1 << mParser.T__11) | (1 << mParser.T__12) | (1 << mParser.T__13) | (1 << mParser.T__14))) != 0)):
-                self._errHandler.recoverInline(self)
+                localctx.op = self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
                 self.consume()
             self.state = 101
-            self.expr(0)
+            localctx.right = self.expr(0)
         except RecognitionException as re:
             localctx.exception = re
             self._errHandler.reportError(self, re)
@@ -1072,16 +1076,17 @@ class mParser ( Parser ):
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
             self.parser = parser
-
-        def condition(self):
-            return self.getTypedRuleContext(mParser.ConditionContext,0)
-
+            self.comparison = None # ConditionContext
 
         def statement(self, i:int=None):
             if i is None:
                 return self.getTypedRuleContexts(mParser.StatementContext)
             else:
                 return self.getTypedRuleContext(mParser.StatementContext,i)
+
+
+        def condition(self):
+            return self.getTypedRuleContext(mParser.ConditionContext,0)
 
 
         def elseString(self):
@@ -1123,7 +1128,7 @@ class mParser ( Parser ):
                 self.state = 104
                 self.match(mParser.T__6)
                 self.state = 105
-                self.condition()
+                localctx.comparison = self.condition()
                 self.state = 106
                 self.match(mParser.T__7)
                 self.state = 107

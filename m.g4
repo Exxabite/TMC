@@ -42,11 +42,11 @@ statement
     ;
 
 condition
-    : expr ('=='| '!=' | '<'|'>'|'<='|'>=') expr
+    : left=expr op=('=='| '!=' | '<'|'>'|'<='|'>=') right=expr
     ;
 
 selectionStatement
-    :   'if' '(' condition ')' statement (elseString statement)?
+    :   'if' '(' comparison=condition ')' statement (elseString statement)?
     |   'switch' '(' condition ')' statement
     ;
 

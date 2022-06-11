@@ -34,6 +34,12 @@ div = 4
 push = 5
 pop = 6
 call = 7
+je = 8
+jg = 9
+jge = 10
+jl = 11
+jle = 12
+jne = 13
 
 OUTPUT = []
 
@@ -178,14 +184,35 @@ class mListener(ParseTreeListener):
         global codeblockName
 
         codeblockName = "if" + str(ifStatementCount)
+        comparison = visitor.visit(ctx.comparison)
+        op = str(ctx.comparison.getChild(1))
+        
+        for operation in comparison:
+            currentFunction.appendCode(operation)
+
         
 
         ifStatementCount += 1
 
+        inverseCode = {
+            8 : 13,  # ==  -->  !=
+            9 : 10,  # <   -->  >=
+            10 : 9,  # <=  -->  >
+            11 : 10, # >   -->  <=
+            12 : 9,  # >=  -->  <
+            13 : 8   # !=  -->  ==
+        }
+        
         if ctx.getChildCount() == 5: #Normal if statement
             pass
         else: #If else statement
-            pass
+            currentFunction.appendCode(
+                [Instruction(inverseCode[comparison[-1].opcode], 
+                            comparison[-1].modify, 
+                            comparison[-1].read, 
+                            currentFunction.getPath() + codeblockName + "Else")
+                ]
+            )
 
     def exitSelectionStatement(self, ctx:mParser.SelectionStatementContext):
         global codeblockName
@@ -193,7 +220,7 @@ class mListener(ParseTreeListener):
 
     def enterElseString(self, ctx:mParser.ElseStringContext):
         global codeblockName
-        codeblockName = "if" + str(ifStatementCount) + "_else"
+        codeblockName = "if" + str(ifStatementCount) + "Else"
 
     # Enter a parse tree produced by mParser#compoundStatement.
     def enterCompoundStatement(self, ctx:mParser.CompoundStatementContext):
@@ -288,6 +315,36 @@ class MyVisitor(mVisitor):
             expression += [Instruction(mov, "eax", "__tmp"+str(exprDepth))]
         return expression
 
+    def visitCondition(self, ctx:mParser.ConditionContext):
+        left = self.visit(ctx.left)
+        right = self.visit(ctx.right)
+        op = str(ctx.getChild(1))
+
+        expression = []
+
+        code = {
+            "==": 8,
+            ">": 9,
+            ">=": 10,
+            "<": 11,
+            "<=": 12,
+            "!=": 13
+        }
+
+        if type(left) == list and type(right) != list:
+            expression += left
+            expression += [Instruction(code[op], "eax", right, currentFunction.getPath() + codeblockName)]
+        elif type(left) != list and type(right) == list:
+            expression += right
+            expression += [Instruction(code[op], left, "eax", currentFunction.getPath() + codeblockName)]
+        elif type(left) == list and type(right) == list:
+            expression += right
+            expression += [Instruction(mov, "ebx", "eax")]
+            expression += left
+            expression += [Instruction(code[op], "eax", "ebx", currentFunction.getPath() + codeblockName)]
+        else:
+            expression += [Instruction(code[op], left, right, currentFunction.getPath() + codeblockName)]
+        return expression
 
 if __name__ == "__main__":
     
