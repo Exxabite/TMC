@@ -189,11 +189,11 @@ class mListener(ParseTreeListener):
 
     def exitSelectionStatement(self, ctx:mParser.SelectionStatementContext):
         global codeblockName
-        codeblockName = None
+        global ifStatementCount
 
     def enterElseString(self, ctx:mParser.ElseStringContext):
         global codeblockName
-        codeblockName += "_else"
+        codeblockName = "if" + str(ifStatementCount) + "_else"
 
     # Enter a parse tree produced by mParser#compoundStatement.
     def enterCompoundStatement(self, ctx:mParser.CompoundStatementContext):
@@ -202,7 +202,11 @@ class mListener(ParseTreeListener):
 
     # Exit a parse tree produced by mParser#compoundStatement.
     def exitCompoundStatement(self, ctx:mParser.CompoundStatementContext):
-        if codeblockName != None:
+        global codeblockName
+        global ifStatementCount
+        if ifStatementCount > 0:
+            codeblockName = None
+            ifStatementCount -= 1
             currentFunction.exitBlock()
     
     
