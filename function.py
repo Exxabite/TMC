@@ -139,6 +139,10 @@ class Codeblock:
     def __init__(self, name, code=None, variableList=None):
         self.name = name
 
+        #This is a temprorary fix.
+        self.code = []
+        self.variableList = []
+
         if code is None:
             self.code = []
         if variableList is None:

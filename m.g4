@@ -46,7 +46,7 @@ condition
     ;
 
 selectionStatement
-    :   'if' '(' condition ')' statement ('else' statement)?
+    :   'if' '(' condition ')' statement (elseString statement)?
     |   'switch' '(' condition ')' statement
     ;
 
@@ -81,6 +81,10 @@ functionCall
 LineComment
     :   '//' ~[\r\n]*
         -> skip
+    ;
+
+elseString
+    : 'else'
     ;
 
 INT  : [0-9]+         ;

@@ -224,5 +224,14 @@ class mListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by mParser#elseString.
+    def enterElseString(self, ctx:mParser.ElseStringContext):
+        pass
+
+    # Exit a parse tree produced by mParser#elseString.
+    def exitElseString(self, ctx:mParser.ElseStringContext):
+        pass
+
+
 
 del mParser

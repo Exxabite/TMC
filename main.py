@@ -37,6 +37,10 @@ call = 7
 
 OUTPUT = []
 
+ifStatementCount = 0
+
+codeblockName = None
+
 mainCode = []
 
 parameterStack = []
@@ -168,6 +172,42 @@ class mListener(ParseTreeListener):
 
         currentFunction.appendCode(Instruction(call, None, name + ''.join(map(str, paramHash)))) #This is temporary, call instuctions should be formated differently
         parameterStack = []
+
+    def enterSelectionStatement(self, ctx:mParser.SelectionStatementContext):
+        global ifStatementCount
+        global codeblockName
+
+        codeblockName = "if" + str(ifStatementCount)
+        
+
+        ifStatementCount += 1
+
+        if ctx.getChildCount() == 5: #Normal if statement
+            pass
+        else: #If else statement
+            pass
+
+    def exitSelectionStatement(self, ctx:mParser.SelectionStatementContext):
+        global codeblockName
+        codeblockName = None
+
+    def enterElseString(self, ctx:mParser.ElseStringContext):
+        global codeblockName
+        codeblockName += "_else"
+
+    # Enter a parse tree produced by mParser#compoundStatement.
+    def enterCompoundStatement(self, ctx:mParser.CompoundStatementContext):
+        if codeblockName != None:
+            currentFunction.enterBlock(codeblockName)
+
+    # Exit a parse tree produced by mParser#compoundStatement.
+    def exitCompoundStatement(self, ctx:mParser.CompoundStatementContext):
+        if codeblockName != None:
+            currentFunction.exitBlock()
+    
+    
+    def enterCondition(self, ctx:mParser.ConditionContext):
+        pass
 
 exprDepth = 0
 

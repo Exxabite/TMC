@@ -129,5 +129,10 @@ class mVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by mParser#elseString.
+    def visitElseString(self, ctx:mParser.ElseStringContext):
+        return self.visitChildren(ctx)
+
+
 
 del mParser
