@@ -19,89 +19,37 @@ class Function:
             self.parameters = parameters
 
         self.__place = self
-        self.__breadcrumb = []
+        self.breadcrumb = []
 
     def appendCode(self, instr, depth=0, var_list=None):
-        place = self.code
 
         if var_list == None:
             var_list = []
 
         if type(instr) == list:
                 for item in instr:
-                    place.append(Instruction(item.opcode, self.getVarPath(item.modify, var_list), self.getVarPath(item.read, var_list), item.codeblock)) #Implement recurion for infinate depth
+                    self.__place.append(Instruction(item.opcode, self.getVarPath(item.modify, var_list), self.getVarPath(item.read, var_list), item.codeblock)) #Implement recurion for infinate depth
         else:
-            place.append(Instruction(instr.opcode, self.getVarPath(instr.modify, var_list), self.getVarPath(instr.read, var_list), instr.codeblock))
+            self.__place.append(Instruction(instr.opcode, self.getVarPath(instr.modify, var_list), self.getVarPath(instr.read, var_list), instr.codeblock))
 
-
-    def __appendCode(self, instr, place, depth, var_list):
-        
-        
-
-
-        #Decent has reached the correct depth - Append instruction
-        """"
-        if len(self.__path) == depth:
-            self.__varList = var_list
-            if type(instr) == list:
-                for item in instr:
-                    place.append(Instruction(item.opcode, self.getVarPath(item.modify, var_list), self.getVarPath(item.read, var_list), item.codeblock)) #Implement recurion for infinate depth
-            else:
-                place.append(Instruction(instr.opcode, self.getVarPath(instr.modify, var_list), self.getVarPath(instr.read, var_list), instr.codeblock))
-        else:
-            #Place is main code and tail is Codeblock - Enter block
-            if len(self.code) > 0 and type(place) != Codeblock and type(place[-1]) == Codeblock:
-                var_list.append(place[-1].variableList)
-                self.__appendCode(instr, place[-1], depth+1, var_list)
-
-            #Place is Codeblock and tail is Codeblock - Enter block
-            elif type(place) == Codeblock and len(place.code) > 0 and type(place.code[-1]) == Codeblock:
-                var_list.append(place.code[-1].variableList)
-                self.__appendCode(instr, place.code[-1], depth+1, var_list)
-        """
-
+    def append(self, instr):
+        self.code.append(instr)
 
     def enterBlock(self, name):
-        if type(self.__place) == Function:
-            self.__place.code.append(Codeblock(name, []))
-        else:
-            self.__place.append(Codeblock(name, []))
+        self.__place.append(Codeblock(name, []))
 
-        self.__breadcrumb.append(self.__place)
+        self.breadcrumb.append(self.__place)
         self.__place = self.__place.code[-1]
-        print("Enter: " + self.__place.name)
+        print("Enter: " + self.getPath() + self.__place.name)
         self.__path.append(name)
-
-    def __enterBlock(self, name, place, depth):
-
-        #Decent has reached the correct depth - Append new block
-        if len(self.__path) == depth:
-            place.append(Codeblock(name, []))
-
-        #Place is main code and tail is Codeblock - Enter block
-        elif len(self.code) > 0 and type(place) != Codeblock and type(place[-1]) == Codeblock:
-            self.__enterBlock(name, place[-1], depth+1)
-        #Place is Codeblock and tail is Codeblock - Enter block
-        elif type(place) == Codeblock and len(place.code) > 0 and type(place.code[-1]) == Codeblock:
-            self.__enterBlock(name, place.code[-1], depth+1)
 
 
     def exitBlock(self):
-        print("Exit: " + self.__place.name)
+        print("Exit: " + self.getPath() + self.__place.name)
         #place = self.code
-        self.__place = self.__breadcrumb[-1]
-        self.__breadcrumb.pop()
+        self.__place = self.breadcrumb[-1]
+        self.breadcrumb.pop()
         self.__path.pop()
-        #self.__exitBlock(place)
-
-    def __exitBlock(self, place):
-        
-        #Place is main code
-        if len(self.code) > 0 and type(place) != Codeblock and type(place[-1]) == Codeblock and type(place[-1].code[-1]) == Codeblock:
-            self.__exitBlock(place[-1])
-
-        elif len(self.code) > 0 and type(place) == Codeblock and type(place.code[-1]) == Codeblock and type(place.code[-1].code[-1]) == Codeblock:
-            self.__exitBlock(place.code[-1])
 
 
     def getPath(self):
@@ -136,23 +84,6 @@ class Function:
             self.variables[name] = VarType
         else:
             self.__place.addVariable(name, VarType)
-
-    def __newVariable(self, name, VarType, place, depth=0):
-        """
-        #place=self.code
-        if len(self.__path) == 0:
-            self.variables[name] = VarType 
-        else:
-            if type(place) == Codeblock:
-                if place.name == self.__path[-1]:
-                    print(place.name)
-                    place.addVariable(name, VarType)
-                    return
-                else:
-                    self.__newVariable(name, VarType, place.code[-1], depth+1)
-            else:
-                self.__newVariable(name, VarType, place[-1], depth+1)
-        """
 
     def getVarType(self, var):
         if type(var) == int:

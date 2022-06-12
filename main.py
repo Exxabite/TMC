@@ -192,7 +192,7 @@ class mListener(ParseTreeListener):
 
         
 
-        ifStatementCount += 1
+        #ifStatementCount += 1
 
         inverseCode = {
             8 : 13,  # ==  -->  !=
@@ -234,6 +234,7 @@ class mListener(ParseTreeListener):
         if ifStatementCount > 0:
             codeblockName = None
             ifStatementCount -= 1
+        if len(currentFunction.breadcrumb) > 0:
             currentFunction.exitBlock()
     
     
