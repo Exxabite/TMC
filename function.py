@@ -18,13 +18,29 @@ class Function:
         else:
             self.parameters = parameters
 
-    def appendCode(self, instr, depth=0):
+        self.__place = self
+        self.__breadcrumb = []
+
+    def appendCode(self, instr, depth=0, var_list=None):
         place = self.code
-        self.__appendCode(instr, place, depth, [])
+
+        if var_list == None:
+            var_list = []
+
+        if type(instr) == list:
+                for item in instr:
+                    place.append(Instruction(item.opcode, self.getVarPath(item.modify, var_list), self.getVarPath(item.read, var_list), item.codeblock)) #Implement recurion for infinate depth
+        else:
+            place.append(Instruction(instr.opcode, self.getVarPath(instr.modify, var_list), self.getVarPath(instr.read, var_list), instr.codeblock))
+
 
     def __appendCode(self, instr, place, depth, var_list):
         
+        
+
+
         #Decent has reached the correct depth - Append instruction
+        """"
         if len(self.__path) == depth:
             self.__varList = var_list
             if type(instr) == list:
@@ -42,11 +58,18 @@ class Function:
             elif type(place) == Codeblock and len(place.code) > 0 and type(place.code[-1]) == Codeblock:
                 var_list.append(place.code[-1].variableList)
                 self.__appendCode(instr, place.code[-1], depth+1, var_list)
+        """
 
 
     def enterBlock(self, name):
-        place = self.code
-        self.__enterBlock(name, place, 0)
+        if type(self.__place) == Function:
+            self.__place.code.append(Codeblock(name, []))
+        else:
+            self.__place.append(Codeblock(name, []))
+
+        self.__breadcrumb.append(self.__place)
+        self.__place = self.__place.code[-1]
+        print("Enter: " + self.__place.name)
         self.__path.append(name)
 
     def __enterBlock(self, name, place, depth):
@@ -64,9 +87,12 @@ class Function:
 
 
     def exitBlock(self):
-        place = self.code
+        print("Exit: " + self.__place.name)
+        #place = self.code
+        self.__place = self.__breadcrumb[-1]
+        self.__breadcrumb.pop()
         self.__path.pop()
-        self.__exitBlock(place)
+        #self.__exitBlock(place)
 
     def __exitBlock(self, place):
         
@@ -105,9 +131,14 @@ class Function:
                 return var
 
     def newVariable(self, name, VarType, depth=0):
-        self.__newVariable(name, VarType, self.code, depth)
+        #self.__newVariable(name, VarType, self.code, depth)
+        if len(self.__path) == 0:
+            self.variables[name] = VarType
+        else:
+            self.__place.addVariable(name, VarType)
 
     def __newVariable(self, name, VarType, place, depth=0):
+        """
         #place=self.code
         if len(self.__path) == 0:
             self.variables[name] = VarType 
@@ -121,6 +152,7 @@ class Function:
                     self.__newVariable(name, VarType, place.code[-1], depth+1)
             else:
                 self.__newVariable(name, VarType, place[-1], depth+1)
+        """
 
     def getVarType(self, var):
         if type(var) == int:
