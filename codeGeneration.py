@@ -35,9 +35,36 @@ def arithmatic(op, in1, in2):
         return "scoreboard players operation "+in1+" system "+code[op]+" "+ str(in2) +" system"
 
 def call(in1):
-    return "function " + "exxabite" + ":" + in1
+    return "function " + NAMESPACE + ":" + in1
 
+def jmpCnd(opcode, in1, in2, codeblock):
+    code = {
+        8 : "=",
+        9 : ">",
+        10: ">=",
+        11: "<",
+        12: "<=",
+        13: "!="
+    }
 
+    if opcode == 13:
+        if type(in2) != int:
+            return "execute unless score "+ in1 +" system "+ code[opcode] +" "+ in2 + " system run function "+ NAMESPACE +":" + codeblock
+        else:
+            return "execute unless score "+ in1 +" system matches "+ in2 +" run function "+ NAMESPACE +":" + codeblock
+
+    else:
+        if type(in2) != int:
+           return "execute if score "+ in1 +" system "+ code[opcode] +" "+ in2 + " system run function "+ NAMESPACE +":" + codeblock
+        else:
+            return "execute if score "+ in1 +" system "+ getMatchcode(opcode, in2) + " system run function "+ NAMESPACE +":" + codeblock
+
+def getMatchcode(opcode, number):
+    if opcode == 8: return str(number)
+    if opcode == 9: str(number + 1) + ".."
+    if opcode == 10:str(number) + ".."
+    if opcode == 11:".." + str(number - 1)
+    if opcode == 12:".." + str(number)
 
 def generateFunctions(code, namespace, scoreboard):
     global NAMESPACE
@@ -55,6 +82,7 @@ def generateFunctions(code, namespace, scoreboard):
         if op.opcode == 5: out = push(op.read)
         if op.opcode == 6: out = pop(op.modify)
         if op.opcode == 7: out = call(op.read)
+        if 8 <= op.opcode <= 13: out = jmpCnd(op.opcode, op.modify, op.read, op.codeblock)
 
         output += out + "\n"
     return output

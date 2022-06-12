@@ -210,7 +210,7 @@ class mListener(ParseTreeListener):
                 [Instruction(inverseCode[comparison[-1].opcode], 
                             comparison[-1].modify, 
                             comparison[-1].read, 
-                            currentFunction.getPath() + codeblockName + "Else")
+                            currentFunction.getPath() + codeblockName + "else")
                 ]
             )
 
@@ -220,7 +220,7 @@ class mListener(ParseTreeListener):
 
     def enterElseString(self, ctx:mParser.ElseStringContext):
         global codeblockName
-        codeblockName = "if" + str(ifStatementCount) + "Else"
+        codeblockName = "if" + str(ifStatementCount) + "else"
 
     # Enter a parse tree produced by mParser#compoundStatement.
     def enterCompoundStatement(self, ctx:mParser.CompoundStatementContext):
@@ -377,10 +377,36 @@ if __name__ == "__main__":
 
     optimizedOutput = optimize(OUTPUT)
 
-    print(mainCode)
+    def denest(code, functionName, path=None):
+        
+        output = []
 
+        if type(code) == Function:
+            path = ""
+            tmpBlock = Codeblock(functionName)
+        elif type(code) == Codeblock:
+            tmpBlock = Codeblock(functionName + "_" + path)
+        
+        for instr in code.code:
+            if type(instr) == Instruction:
+                tmpBlock.append(instr)
+            elif type(instr) == Codeblock:
+                if len(path) > 0 and path[-1] != "_":
+                    output += denest(instr, functionName, path + "." +instr.name )
+                else:
+                    output += denest(instr, functionName, path + instr.name )
 
+        output += [tmpBlock]
+        return output
+
+    denestedCode = []
     for func in mainCode:
+        denestedCode += denest(func, func.name)
+
+    for block in denestedCode:
+            print(block.name)
+
+    for func in denestedCode:
         file = open(sys.argv[2] + func.name + ".mcfunction", "w", encoding="utf-8")
         file.write(
             generateFunctions(func.code,"exxabite", "system")
