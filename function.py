@@ -28,9 +28,9 @@ class Function:
 
         if type(instr) == list:
                 for item in instr:
-                    self.__place.append(Instruction(item.opcode, self.getVarPath(item.modify, var_list), self.getVarPath(item.read, var_list), item.codeblock)) #Implement recurion for infinate depth
+                    self.__place.append(Instruction(item.opcode, self.getVarPath(item.modify), self.getVarPath(item.read), item.codeblock)) #Implement recurion for infinate depth
         else:
-            self.__place.append(Instruction(instr.opcode, self.getVarPath(instr.modify, var_list), self.getVarPath(instr.read, var_list), instr.codeblock))
+            self.__place.append(Instruction(instr.opcode, self.getVarPath(instr.modify), self.getVarPath(instr.read), instr.codeblock))
 
     def append(self, instr):
         self.code.append(instr)
@@ -58,25 +58,23 @@ class Function:
         else:
             return self.name + "_" + '.'.join(map(str, self.__path)) + "."
 
-    def getVarPath(self, var, varList):
+
+    def getVarPath(self, var):
         if type(var) == int:
             return var
-        if len(self.__path) == 0:
+
+        if len(self.breadcrumb) == 0:
             if var in self.variables:
                 return self.name + "_" + var
             else:
                 return var
-
         else:
-            for index in reversed(range(0, len(varList))):
-                if var in varList[index]:
-                    return self.name + "_" + '.'.join(map(str, self.__path[:(index+1)])) +"."+ var
-
-            #Not in any of the codeblocks
-            if var in self.variables:
-                return self.name + "_" + var
-            else:
-                return var
+            for depth in reversed(range(0, len(self.breadcrumb))):
+                print(self.breadcrumb[depth].variables)
+                if var in self.breadcrumb[depth].variables:
+                    return self.name + "_" + '.'.join(map(str, self.__path[:(depth+1)])) +"."+ var
+            
+            return var  #Not in any of the codeblocks
 
     def newVariable(self, name, VarType, depth=0):
         #self.__newVariable(name, VarType, self.code, depth)
@@ -106,23 +104,23 @@ class Instruction:
         self.codeblock = codeblock          
 
 class Codeblock:
-    def __init__(self, name, code=None, variableList=None):
+    def __init__(self, name, code=None, variables=None):
         self.name = name
 
         #This is a temprorary fix.
         self.code = []
-        self.variableList = []
+        self.variables = []
 
         if code is None:
             self.code = []
-        if variableList is None:
-            self.variableList = {}
+        if variables is None:
+            self.variables = {}
 
     def append(self, instr):
         self.code.append(instr)
 
     def addVariable(self, name, VarType):
-        self.variableList[name] = VarType
+        self.variables[name] = VarType
 
 #Example of gneration code
 
@@ -180,10 +178,10 @@ def printCode(code_list, indent=0):
                 print(" "*indent + operation[instr.opcode] + " " + str(instr.modify) + ", " + str(instr.read))
             
             else:
-                print(" "*indent + operation[instr.opcode] + " " + str(instr.codeReference))
+                print(" "*indent + operation[instr.opcode] + " " + str(instr.codeReference)) #Should never be reached
 
         elif type(instr) == Codeblock:
-            print(" "*indent + instr.name + ": " + ', '.join(map(str, instr.variableList)))
+            print(" "*indent + instr.name + ": " + ', '.join(map(str, instr.variables)))
             printCode(instr.code, indent + 4)
         else:
             print(instr)

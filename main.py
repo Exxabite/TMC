@@ -231,9 +231,7 @@ class mListener(ParseTreeListener):
     def exitCompoundStatement(self, ctx:mParser.CompoundStatementContext):
         global codeblockName
         global ifStatementCount
-        if ifStatementCount > 0:
-            codeblockName = None
-            ifStatementCount -= 1
+
         if len(currentFunction.breadcrumb) > 0:
             currentFunction.exitBlock()
     
