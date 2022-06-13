@@ -70,9 +70,14 @@ class Function:
                 return var
         else:
             for depth in reversed(range(0, len(self.breadcrumb))):
-                print(self.breadcrumb[depth].variables)
-                if var in self.breadcrumb[depth].variables:
+                if var in self.__place.variables:
                     return self.name + "_" + '.'.join(map(str, self.__path[:(depth+1)])) +"."+ var
+
+                elif var in self.breadcrumb[depth].variables:
+                    if depth == 0:
+                        return self.name + "_" + var
+                    else:
+                        return self.name + "_" + '.'.join(map(str, self.__path[:(depth+1)])) +"."+ var
             
             return var  #Not in any of the codeblocks
 
