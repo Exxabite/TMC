@@ -108,9 +108,11 @@ class mListener(ParseTreeListener):
         name = str(ctx.getChild(1))
 
         currentFunction.parameters.append(datatype)
+        global parameterNames
+        parameterNames = []
+        parameterNames.append(name)
 
         currentFunction.newVariable(name, datatype)
-        currentFunction.appendCode(Instruction(pop, name, None))
 
     def exitParamList(self, ctx:mParser.ParamListContext):
         
@@ -123,6 +125,9 @@ class mListener(ParseTreeListener):
             functions[currentFunction.name] = [currentFunction.parameters]
 
         currentFunction.name = currentFunction.name + ''.join(map(str, currentFunction.parameters))
+        global parameterNames
+        for name in parameterNames:
+            currentFunction.appendCode(Instruction(pop, name, None))
 
     def enterReturnStatement(self, ctx:mParser.ReturnStatementContext):
         value = visitor.visit(ctx.value)
@@ -247,8 +252,8 @@ class MyVisitor(mVisitor):
 
 if __name__ == "__main__":
     
-    #text = open(sys.argv[1]).read() !only for debuging!
-    text = open("words.c", encoding="utf-8").read()
+    text = open(sys.argv[1]).read() #!only for debuging!
+    #text = open("words.c", encoding="utf-8").read()
     data = InputStream(text)
 
     # lexer
