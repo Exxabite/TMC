@@ -99,6 +99,7 @@ class mListener(ParseTreeListener):
 
 
     def exitFunctionDefinition(self, ctx:mParser.FunctionDefinitionContext):
+        global codeblockName
 
         mainCode.append(
             Function(currentFunction.name, currentFunction.code,
@@ -110,6 +111,7 @@ class mListener(ParseTreeListener):
         currentFunction.parameters = []
         currentFunction.variables = {}
         currentFunction.code = []
+        codeblockName = None
 
 
     def enterParam(self, ctx:mParser.ParamContext):
@@ -196,8 +198,8 @@ class mListener(ParseTreeListener):
 
         inverseCode = {
             8 : 13,  # ==  -->  !=
-            9 : 10,  # <   -->  >=
-            10 : 9,  # <=  -->  >
+            9 : 12,  # <   -->  >=
+            10 : 11,  # <=  -->  >
             11 : 10, # >   -->  <=
             12 : 9,  # >=  -->  <
             13 : 8   # !=  -->  ==
@@ -347,8 +349,8 @@ class MyVisitor(mVisitor):
 
 if __name__ == "__main__":
     
-    #text = open(sys.argv[1]).read() !only for debuging!
-    text = open("words.c", encoding="utf-8").read()
+    text = open(sys.argv[1]).read() #!only for debuging!
+    #text = open("words.c", encoding="utf-8").read()
     data = InputStream(text)
 
     # lexer
@@ -370,7 +372,7 @@ if __name__ == "__main__":
 
     for function in mainCode:
         printFunction(function)
-
+    
     for line in OUTPUT:
         print(line)
 

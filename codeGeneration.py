@@ -44,12 +44,12 @@ def jmpCnd(opcode, in1, in2, codeblock):
         10: ">=",
         11: "<",
         12: "<=",
-        13: "!="
+        #13: "!="
     }
 
     if opcode == 13:
         if type(in2) != int:
-            return "execute unless score "+ in1 +" system "+ code[opcode] +" "+ in2 + " system run function "+ NAMESPACE +":" + codeblock
+            return "execute unless score "+ in1 +" system = "+ in2 + " system run function "+ NAMESPACE +":" + codeblock
         else:
             return "execute unless score "+ in1 +" system matches "+ in2 +" run function "+ NAMESPACE +":" + codeblock
 
