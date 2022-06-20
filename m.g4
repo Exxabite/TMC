@@ -13,7 +13,7 @@ functions
     : functionDefinition
     ;
 
-operation: opera ';';
+operation: opera ';'?;
 
 opera
     : assignVariable                           
