@@ -114,5 +114,40 @@ class mVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by mParser#macroDefinition.
+    def visitMacroDefinition(self, ctx:mParser.MacroDefinitionContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by mParser#include.
+    def visitInclude(self, ctx:mParser.IncludeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by mParser#macroParamList.
+    def visitMacroParamList(self, ctx:mParser.MacroParamListContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by mParser#macroParam.
+    def visitMacroParam(self, ctx:mParser.MacroParamContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by mParser#macroCall.
+    def visitMacroCall(self, ctx:mParser.MacroCallContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by mParser#macroCallParam.
+    def visitMacroCallParam(self, ctx:mParser.MacroCallParamContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by mParser#macroCallParamList.
+    def visitMacroCallParamList(self, ctx:mParser.MacroCallParamListContext):
+        return self.visitChildren(ctx)
+
+
 
 del mParser

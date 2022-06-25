@@ -197,5 +197,68 @@ class mListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by mParser#macroDefinition.
+    def enterMacroDefinition(self, ctx:mParser.MacroDefinitionContext):
+        pass
+
+    # Exit a parse tree produced by mParser#macroDefinition.
+    def exitMacroDefinition(self, ctx:mParser.MacroDefinitionContext):
+        pass
+
+
+    # Enter a parse tree produced by mParser#include.
+    def enterInclude(self, ctx:mParser.IncludeContext):
+        pass
+
+    # Exit a parse tree produced by mParser#include.
+    def exitInclude(self, ctx:mParser.IncludeContext):
+        pass
+
+
+    # Enter a parse tree produced by mParser#macroParamList.
+    def enterMacroParamList(self, ctx:mParser.MacroParamListContext):
+        pass
+
+    # Exit a parse tree produced by mParser#macroParamList.
+    def exitMacroParamList(self, ctx:mParser.MacroParamListContext):
+        pass
+
+
+    # Enter a parse tree produced by mParser#macroParam.
+    def enterMacroParam(self, ctx:mParser.MacroParamContext):
+        pass
+
+    # Exit a parse tree produced by mParser#macroParam.
+    def exitMacroParam(self, ctx:mParser.MacroParamContext):
+        pass
+
+
+    # Enter a parse tree produced by mParser#macroCall.
+    def enterMacroCall(self, ctx:mParser.MacroCallContext):
+        pass
+
+    # Exit a parse tree produced by mParser#macroCall.
+    def exitMacroCall(self, ctx:mParser.MacroCallContext):
+        pass
+
+
+    # Enter a parse tree produced by mParser#macroCallParam.
+    def enterMacroCallParam(self, ctx:mParser.MacroCallParamContext):
+        pass
+
+    # Exit a parse tree produced by mParser#macroCallParam.
+    def exitMacroCallParam(self, ctx:mParser.MacroCallParamContext):
+        pass
+
+
+    # Enter a parse tree produced by mParser#macroCallParamList.
+    def enterMacroCallParamList(self, ctx:mParser.MacroCallParamListContext):
+        pass
+
+    # Exit a parse tree produced by mParser#macroCallParamList.
+    def exitMacroCallParamList(self, ctx:mParser.MacroCallParamListContext):
+        pass
+
+
 
 del mParser

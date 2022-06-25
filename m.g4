@@ -11,6 +11,8 @@ assignVariable
 
 functions
     : functionDefinition
+    | macroDefinition
+    | include
     ;
 
 operation: opera ';'?;
@@ -20,6 +22,7 @@ opera
     | defineVariable                           
     | returnStatement                          
     | functionCall
+    | macroCall
     ;
 
 expr: left=expr op=('*'|'/') right=expr        # InfixExpr
@@ -66,6 +69,36 @@ functionCall
 LineComment
     :   '//' ~[\r\n]*
         -> skip
+    ;
+
+//Preprocessor
+
+macroDefinition
+    :   'macro' name=WORD '(' macroParamList? ')' Codeblock
+    ;
+
+Codeblock: '[!' .*? '!]';
+
+include: '#include' STRING;
+
+macroParamList
+    :   macroParam (',' macroParam)*
+    ;
+
+macroParam: name=WORD;
+
+macroCall
+    : '!' name=WORD '(' macroCallParamList? ')'
+    ;
+
+macroCallParam
+    : name=WORD
+    | STRING
+    | INT
+    ;
+
+macroCallParamList
+    : macroCallParam (',' macroCallParam)*
     ;
 
 INT  : [0-9]+         ;
