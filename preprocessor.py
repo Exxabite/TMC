@@ -19,63 +19,32 @@ class preprocessorListener(ParseTreeListener):
         Macros[name] = "def " + name + "(" + params + ")" + ":\n"
         Macros[name] += str(ctx.getChild(5))[2:-2]
 
-        #For debuging
-        #Macros[name] += name + "('text', 1)"
-        #print(MacroCode)
-
     def exitMacroDefinition(self, ctx:mParser.MacroDefinitionContext):
         global NewCode
-
-        token_source = ctx.start.getTokenSource()
-        input_stream = token_source.inputStream
-        start, stop  = ctx.start.start, ctx.stop.stop
-        
 
         name = str(ctx.getChild(1))
         exec(Macros[name])
         #print(input_stream.getText(start, stop))
-        NewCode = NewCode.replace(input_stream.getText(start, stop), "")
+        NewCode = NewCode.replace(extract_original_text(ctx), "")
 
     def enterMacroCall(self, ctx:mParser.MacroCallContext):
         global NewCode
         visitor = MyVisitor()
-
-        token_source = ctx.start.getTokenSource()
-        input_stream = token_source.inputStream
-        start, stop  = ctx.start.start, ctx.stop.stop
 
         name = str(ctx.getChild(1))
         params = visitor.visit(ctx.getChild(3))
 
         call = name + "("+ params +")"
 
-        #print(Macros[name])
-        #print("Result = " + call)
-
         #This code is very bad
-        global Result
-        Result = ""
         exec(Macros[name] + "global Result \nResult = " + call)
 
-        #print("Result: " +Result)
-
-        NewCode = NewCode.replace(input_stream.getText(start, stop), Result)
+        NewCode = NewCode.replace(extract_original_text(ctx), Result)
 
 
 class MyVisitor(mVisitor):
     def visitMacroParamList(self, ctx:mParser.ParamListContext):
         return str(ctx.getText())
-
-    def visitMacroCallParamList(self, ctx:mParser.ParamListContext):
-        return str(ctx.getText())
-        visitor = MyVisitor()
-        ParamList = ""
-        for i in ctx.getChildCount():
-            param = visitor.visit(ctx.getChild(i))
-            if param != None:
-                ParamList += param
-        #return ParamList
-        #return self.visitChildren(ctx)
 
     def visitMacroCallParam(self, ctx:mParser.MacroCallParamContext):
         try:
@@ -83,7 +52,7 @@ class MyVisitor(mVisitor):
         except ValueError:
             return '"'+ ctx.getText() +'"'
 
-def extract_original_text(self, ctx):
+def extract_original_text(ctx):
     token_source = ctx.start.getTokenSource()
     input_stream = token_source.inputStream
     start, stop  = ctx.start.start, ctx.stop.stop
