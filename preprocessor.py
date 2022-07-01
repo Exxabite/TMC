@@ -3,15 +3,14 @@ from dist.mLexer import mLexer
 from dist.mParser import mParser
 from dist.mVisitor import mVisitor
 
-NewCode = ""
-
 Macros = {}
 
 class preprocessorListener(ParseTreeListener):
+    def __init__(self, code):
+        self.NewCode = code
    
     def enterMacroDefinition(self, ctx:mParser.MacroDefinitionContext):
         visitor = MyVisitor()
-        global MacroCode
         global Macros
         name = str(ctx.getChild(1))
         params = visitor.visit(ctx.getChild(3))
@@ -20,15 +19,13 @@ class preprocessorListener(ParseTreeListener):
         Macros[name] += str(ctx.getChild(5))[2:-2]
 
     def exitMacroDefinition(self, ctx:mParser.MacroDefinitionContext):
-        global NewCode
 
         name = str(ctx.getChild(1))
         exec(Macros[name])
         #print(input_stream.getText(start, stop))
-        NewCode = NewCode.replace(extract_original_text(ctx), "")
+        self.NewCode = self.NewCode.replace(extract_original_text(ctx), "")
 
     def enterMacroCall(self, ctx:mParser.MacroCallContext):
-        global NewCode
         visitor = MyVisitor()
 
         name = str(ctx.getChild(1))
@@ -39,19 +36,12 @@ class preprocessorListener(ParseTreeListener):
         #This code is very bad
         exec(Macros[name] + "global Result \nResult = " + call)
 
-        NewCode = NewCode.replace(extract_original_text(ctx), Result)
+        self.NewCode = self.NewCode.replace(extract_original_text(ctx), Result)
 
-    def enterInclude(self, ctx:mParser.IncludeContext):
-        global NewCode
+    def enterInclude(self, ctx):
         name = str(ctx.getChild(1))
         text = open(name[1:-1]).read()
-        #Bad code
-        temp = str(NewCode)
-        NewCode = ""
-        text = preprocess(text)
-        NewCode = str(temp)
-
-        NewCode = NewCode.replace(extract_original_text(ctx), text)
+        self.NewCode = self.NewCode.replace(extract_original_text(ctx), preprocess(text))
 
 class MyVisitor(mVisitor):
     def visitMacroParamList(self, ctx:mParser.ParamListContext):
@@ -71,9 +61,6 @@ def extract_original_text(ctx):
 
 def preprocess(code):
 
-    global NewCode
-    NewCode = code
-    
     data = InputStream(code)
 
     # lexer
@@ -86,12 +73,9 @@ def preprocess(code):
     visitor = MyVisitor()
     #ParseTreeListener()
 
-    printer = preprocessorListener()
+    printer = preprocessorListener(code)
     walker = ParseTreeWalker()
-
 
     walker.walk(printer, tree)
 
-    print(NewCode)
-
-    return NewCode
+    return printer.NewCode
