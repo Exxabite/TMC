@@ -6,6 +6,7 @@ from dist.mLexer import mLexer
 from dist.mParser import mParser
 from dist.mVisitor import mVisitor
 from function import *
+from preprocessor import *
 
 types = {
     "int" : 0
@@ -254,7 +255,12 @@ if __name__ == "__main__":
     
     text = open(sys.argv[1]).read() #!only for debuging!
     #text = open("words.c", encoding="utf-8").read()
+    #Preprocessor
+    text = preprocess(text)
+
+
     data = InputStream(text)
+
 
     # lexer
     lexer = mLexer(data)
