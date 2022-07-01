@@ -41,6 +41,17 @@ class preprocessorListener(ParseTreeListener):
 
         NewCode = NewCode.replace(extract_original_text(ctx), Result)
 
+    def enterInclude(self, ctx:mParser.IncludeContext):
+        global NewCode
+        name = str(ctx.getChild(1))
+        text = open(name[1:-1]).read()
+        #Bad code
+        temp = str(NewCode)
+        NewCode = ""
+        text = preprocess(text)
+        NewCode = str(temp)
+
+        NewCode = NewCode.replace(extract_original_text(ctx), text)
 
 class MyVisitor(mVisitor):
     def visitMacroParamList(self, ctx:mParser.ParamListContext):
@@ -83,15 +94,4 @@ def preprocess(code):
 
     print(NewCode)
 
-
-    new = ""
-    for line in code.splitlines():
-
-        lineList = line.split()
-
-        if len(lineList) > 1 and lineList[0] == "#include":
-            #print(lineList)
-            line = open(lineList[1][1:-1]).read()
-        new += line + "\n"
-    #print(new)
     return NewCode
