@@ -43,8 +43,6 @@ jne = 13
 
 OUTPUT = []
 
-ifStatementCount = 0
-
 codeblockName = None
 
 mainCode = []
@@ -52,6 +50,8 @@ mainCode = []
 parameterStack = []
 
 class mListener(ParseTreeListener):
+    ifStatementCount = [0]
+
     def enterAssignExpr(self, ctx:mParser.AssignExprContext):
         visitor = MyVisitor()
 
@@ -182,19 +182,15 @@ class mListener(ParseTreeListener):
         parameterStack = []
 
     def enterSelectionStatement(self, ctx:mParser.SelectionStatementContext):
-        global ifStatementCount
         global codeblockName
 
-        codeblockName = "if" + str(ifStatementCount)
+        codeblockName = "if" + str(self.ifStatementCount[-1])
         comparison = visitor.visit(ctx.comparison)
         op = str(ctx.comparison.getChild(1))
         
         for operation in comparison:
             currentFunction.appendCode(operation)
 
-        
-
-        #ifStatementCount += 1
 
         inverseCode = {
             8 : 13,  # ==  -->  !=
@@ -218,24 +214,23 @@ class mListener(ParseTreeListener):
 
     def exitSelectionStatement(self, ctx:mParser.SelectionStatementContext):
         global codeblockName
-        global ifStatementCount
+        self.ifStatementCount[-1] += 1
 
     def enterElseString(self, ctx:mParser.ElseStringContext):
         global codeblockName
-        codeblockName = "if" + str(ifStatementCount) + "else"
+        codeblockName = "if" + str(self.ifStatementCount[-1]) + "else"
 
     # Enter a parse tree produced by mParser#compoundStatement.
     def enterCompoundStatement(self, ctx:mParser.CompoundStatementContext):
         if codeblockName != None:
+            self.ifStatementCount.append(0)
             currentFunction.enterBlock(codeblockName)
 
     # Exit a parse tree produced by mParser#compoundStatement.
     def exitCompoundStatement(self, ctx:mParser.CompoundStatementContext):
-        global codeblockName
-        global ifStatementCount
-
         if len(currentFunction.breadcrumb) > 0:
             currentFunction.exitBlock()
+            self.ifStatementCount.pop()
     
     
     def enterCondition(self, ctx:mParser.ConditionContext):
